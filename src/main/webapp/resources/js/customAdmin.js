@@ -2,6 +2,14 @@ $(document).ready(function(){
 	
 	updateCountdown();
 	$('#textarea2').live('input', updateCountdown);
+	
+	$('#allGroupCheckbox').click(function () {
+		if ($('#allGroupCheckbox').is(':checked')) {
+			$(".groupCheckbox").prop('checked', true);
+		}else{
+			$(".groupCheckbox").prop('checked', false);
+		}
+	});
 
 });
 

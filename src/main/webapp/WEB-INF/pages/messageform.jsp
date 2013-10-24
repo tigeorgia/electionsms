@@ -20,10 +20,25 @@
 				<!-- content starts -->
 				<div>
 					<ul class="breadcrumb">
-						<li><a href="${pageContext.request.contextPath}/">Home</a> <span class="divider">/</span></li>
+						<li><a href="${pageContext.request.contextPath}/">Home</a> <span
+							class="divider">/</span></li>
 						<li>Send message</li>
 					</ul>
 				</div>
+
+				<c:if test="${errorMessage != null}">
+					<div class="alert alert-error">
+						<button type="button" class="close" data-dismiss="alert">×</button>
+						<strong>Error</strong> ${errorMessage}
+					</div>
+				</c:if>
+
+				<c:if test="${validMessage != null}">
+					<div class="alert alert-success">
+							<button type="button" class="close" data-dismiss="alert">×</button>
+							<strong>Success!</strong> ${validMessage}
+						</div>
+				</c:if>
 
 				<div class="row-fluid sortable">
 					<div class="box span12">
@@ -33,18 +48,33 @@
 							</h2>
 						</div>
 						<div class="box-content">
-							<form:form modelAttribute="messageModel" action="${pageContext.request.contextPath}/sendmessage/result" method="POST" class="form-horizontal">
+							<form:form modelAttribute="messageModel"
+								action="${pageContext.request.contextPath}/sendmessage/result"
+								method="POST" class="form-horizontal">
 								<fieldset>
 									<div class="control-group">
-										<label class="control-label" for="textarea2">Type your message here (160 characters max.)</label>
+										<label class="control-label" for="textarea2">Type your
+											message here (160 characters max.)</label>
 										<div class="controls">
-											<form:textarea class="message" id="textarea2" rows="10" maxlength="160" path="body"></form:textarea>
+											<form:textarea class="message" id="textarea2" rows="8"
+												cols="40" maxlength="160" path="body"></form:textarea>
 											<span class="countdown"></span>
+										</div>
+										<div class="controls">
+											<label class="checkbox inline"> <input
+												type="checkbox" id="allGroupCheckbox" value="All" /> All
+											</label>
+											<c:forEach var="group" items="${groups}">
+												<label class="checkbox inline"> <form:checkbox
+														path="chosenGroups" class="groupCheckbox" value="${group}" />
+													${group}
+												</label>
+											</c:forEach>
 										</div>
 									</div>
 									<div class="form-actions">
-										<button type="submit" class="btn btn-primary">Send
-											message</button>
+										<button type="submit" id="sendMessageSubmitId"
+											class="btn btn-primary">Send message</button>
 									</div>
 								</fieldset>
 							</form:form>
