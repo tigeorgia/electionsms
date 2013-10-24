@@ -30,21 +30,14 @@
 							<h2>
 								<i class="icon-info-sign"></i> Introduction
 							</h2>
-							<div class="box-icon">
-								<a href="#" class="btn btn-setting btn-round"><i
-									class="icon-cog"></i></a> <a href="#"
-									class="btn btn-minimize btn-round"><i
-									class="icon-chevron-up"></i></a> <a href="#"
-									class="btn btn-close btn-round"><i class="icon-remove"></i></a>
-							</div>
 						</div>
 						<div class="box-content">
-							<h1>Election SMS panel</h1>
+							<h1>Election SMS</h1>
 							<p>For now, it is only possible to send a message ("Send
 								message") to a pre-defined group of people (list of people can
 								be seen in "Show recipients").</p>
 							<p>The sent messages are tracked in a log file, which can be seen in "Logging".	
-							<p>This section will be updated, if there are new
+							<p>This summary will be updated, if there are new
 								functionalities.</p>
 							<div class="clearfix"></div>
 						</div>

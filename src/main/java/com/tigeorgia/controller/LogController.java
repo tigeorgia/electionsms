@@ -15,6 +15,8 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.tigeorgia.util.Constants;
+
 
 @Controller
 @RequestMapping("/logging")
@@ -22,11 +24,14 @@ public class LogController {
 	
 	private static final Logger logger = Logger.getLogger(LogController.class);
 	
-	private static final String MESSAGE_TAG = "SENTMESSAGE";
-	
+	/**
+	 * Shows the log file, containing the history of messages that have been sent.
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public String displayLogFile(ModelMap model) {
-		logger.info("opening log file now...");
+
 		List<String> messageLog = new LinkedList<String>();
 		InputStream inputStream = null;
 		try {
@@ -35,8 +40,8 @@ public class LogController {
 			while (br.ready()){
 				String line = br.readLine();
 				if (line != null && !line.isEmpty()){
-					if (line.contains(MESSAGE_TAG)){
-						String resultLine = line.replaceAll(MESSAGE_TAG, "");
+					if (line.contains(Constants.MESSAGE_TAG)){
+						String resultLine = line.replaceAll(Constants.MESSAGE_TAG, "").replaceAll("INFO", "");
 						messageLog.add(resultLine);
 					}
 				}
@@ -64,7 +69,7 @@ public class LogController {
 		
 		model.addAttribute("messageLog",messageLog);
 		
-		return "logfile";
+		return Constants.LOGGING_VIEW;
  
 	}
 

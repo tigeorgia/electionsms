@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.tigeorgia.model.Person;
+import com.tigeorgia.util.Constants;
 
 @Controller
 @RequestMapping("/showlist")
@@ -22,6 +23,11 @@ public class ShowListController {
 
 	private static final Logger logger = Logger.getLogger(ShowListController.class);
 
+	/**
+	 * Shows list of recipients, after reading their details from a CSV file.
+	 * @param model
+	 * @return view
+	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public String showlist(ModelMap model) {
 
@@ -49,9 +55,9 @@ public class ShowListController {
 				}			    
 			}
 		} catch (IOException e) {
-			String errorMessage = "ERROR: line in log file could not be read.";
+			String errorMessage = "line in log file could not be read.";
 			logger.error(errorMessage, e);
-			model.addAttribute("errorMsg", errorMessage);
+			model.addAttribute("errorMsg", "ERROR: " + errorMessage);
 		}finally{
 			// releases system resources associated with this stream
 			if(inputStream != null)
@@ -62,11 +68,9 @@ public class ShowListController {
 				}
 		}
 
-		logger.warn("list to be displayed now");
-
 		model.addAttribute("recipients", recipients);
 
-		return "recipientlist";
+		return Constants.RECIPIENT_LIST_VIEW;
 
 	}
 
