@@ -1,21 +1,41 @@
 package com.tigeorgia.config;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.xml.transform.Source;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.xml.SourceHttpMessageConverter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.JstlView;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
+import org.springframework.xml.xpath.Jaxp13XPathTemplate;
+
+import com.tigeorgia.webservice.MagtiClient;
 
 @Configuration
 @EnableWebMvc
 @EnableTransactionManagement
+@PropertySource("classpath:application.properties")
 @ComponentScan("com.tigeorgia")
 public class AppConfig extends WebMvcConfigurerAdapter{
+	
+	@Resource
+	private Environment env;
 
 	@Bean
 	public UrlBasedViewResolver setupViewResolver() {
@@ -38,6 +58,53 @@ public class AppConfig extends WebMvcConfigurerAdapter{
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
         configurer.enable();
     }
+	
+	/*@Bean
+	public RestTemplate restTemplate(){
+		RestTemplate restTemplate = new RestTemplate();
+		Jaxb2Marshaller xmlMarshaller = new Jaxb2Marshaller();
+		//xmlMarshaller.setClassesToBeBound(classesToBeBound);
+		
+		MarshallingHttpMessageConverter messageConverters = new MarshallingHttpMessageConverter();
+		messageConverters.setMarshaller(xmlMarshaller);
+		messageConverters.setUnmarshaller(xmlMarshaller);
+		List<HttpMessageConverter<?>> converters = new ArrayList<HttpMessageConverter<?>>();
+		converters.add(messageConverters);
+		
+		restTemplate.setMessageConverters(converters);
+		
+		return restTemplate;
+	}*/
+	
+	@Bean
+	public RestTemplate restTemplate(){
+		RestTemplate restTemplate = new RestTemplate();
+		List<HttpMessageConverter<?>> converters = new ArrayList<HttpMessageConverter<?>>();
+		converters.add(new SourceHttpMessageConverter<Source>());
+		restTemplate.setMessageConverters(converters);
+		return restTemplate;
+		
+	}
+	
+	@Bean
+	public Jaxp13XPathTemplate xpathTemplate(){
+		return new Jaxp13XPathTemplate();
+	}
+	
+	@Bean
+	public MagtiClient magtiClient(){
+		MagtiClient magtiClient = new MagtiClient();
+		String params = "?username=${username}&password=${password}&client_id=${client_id}&service_id=${service_id}&to=${to}&text=${text}";
+		magtiClient.setMagtiWebserviceEndpoint(env.getRequiredProperty("magti.webservice.endpoint") + params);
+		
+		Map<String,String> variables = new HashMap<String,String>();
+		variables.put("username", env.getRequiredProperty("magti.username"));
+		variables.put("password", env.getRequiredProperty("magti.password"));
+		variables.put("client_id", env.getRequiredProperty("magti.clientid"));
+		variables.put("service_id", env.getRequiredProperty("magti.serviceid"));
+		
+		return magtiClient;
+	}
 	
 
 }

@@ -43,6 +43,7 @@
 										<th>#</th>
 										<th>Name</th>
 										<th>Phone(s)</th>
+										<th>Group</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -55,6 +56,7 @@
 													${number}&nbsp;
 												</c:forEach>
 											</td>
+											<td>${person.group}</td>
 										</tr>
 									</c:forEach>
 								</tbody>

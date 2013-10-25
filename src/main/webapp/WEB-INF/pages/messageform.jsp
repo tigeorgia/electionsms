@@ -32,6 +32,13 @@
 						<strong>Error</strong> ${errorMessage}
 					</div>
 				</c:if>
+				
+				<c:if test="${didntReceiveMessage != null}">
+					<div class="alert alert-info">
+						<button type="button" class="close" data-dismiss="alert">×</button>
+						<strong>Warning</strong> ${didntReceiveMessage}
+					</div>
+				</c:if>
 
 				<c:if test="${validMessage != null}">
 					<div class="alert alert-success">

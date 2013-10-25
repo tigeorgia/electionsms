@@ -6,8 +6,16 @@ public class Person {
 	
 	private String name;
 	private ArrayList<String> numbers;
-	private ArrayList<String> groups;
+	private String group;
+	private String errorCode;
 	
+	public Person() {	}
+	
+	public Person(String name, ArrayList<String> numbers, String group) {
+		this.name = name;
+		this.numbers = numbers;
+		this.group = group;
+	}
 	public String getName() {
 		return name;
 	}
@@ -20,11 +28,18 @@ public class Person {
 	public void setNumbers(ArrayList<String> numbers) {
 		this.numbers = numbers;
 	}
-	public ArrayList<String> getGroups() {
-		return groups;
+	public String getGroup() {
+		return group;
 	}
-	public void setGroups(ArrayList<String> groups) {
-		this.groups = groups;
-	}		
+	public void setGroup(String group) {
+		this.group = group;
+	}
+	public String getErrorCode() {
+		return errorCode;
+	}
+	public void setErrorCode(String errorCode) {
+		this.errorCode = errorCode;
+	}
+	
 
 }

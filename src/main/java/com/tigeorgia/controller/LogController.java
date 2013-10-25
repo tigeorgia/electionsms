@@ -34,9 +34,10 @@ public class LogController {
 
 		List<String> messageLog = new LinkedList<String>();
 		InputStream inputStream = null;
+		BufferedReader br = null;
 		try {
 			inputStream = new FileInputStream("/tmp/electionsms/logfile.log");
-			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+			br = new BufferedReader(new InputStreamReader(inputStream));
 			while (br.ready()){
 				String line = br.readLine();
 				if (line != null && !line.isEmpty()){
@@ -62,6 +63,7 @@ public class LogController {
 			if(inputStream != null)
 				try {
 					inputStream.close();
+					br.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

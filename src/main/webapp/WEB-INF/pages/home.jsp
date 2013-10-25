@@ -33,12 +33,11 @@
 						</div>
 						<div class="box-content">
 							<h1>Election SMS</h1>
-							<p>For now, it is only possible to send a message ("Send
-								message") to a pre-defined group of people (list of people can
-								be seen in "Show recipients").</p>
-							<p>The sent messages are tracked in a log file, which can be seen in "Logging".	
-							<p>This summary will be updated, if there are new
-								functionalities.</p>
+							<p>- You can send messages ("Send
+								message" link on the left) to 1 or several groups of people.</p>
+							<p>- These people are all listed in the "Show recipients" page.</p>
+							<p>- The sent messages are tracked in a log file, which can be seen in the "Logging" page.	
+							<p>This summary will be updated, if there are new	functionalities.</p>
 							<div class="clearfix"></div>
 						</div>
 					</div>
