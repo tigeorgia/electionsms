@@ -7,11 +7,11 @@ Web application sending bulk SMS to a group of election observers, via Magti web
 
 Once you have cloned the application onto your machine, go throught the following steps:
 1. Make sure you have Maven install on your machine.
-⋅⋅* Type the following command to check if it is already installed:
+Type the following command to check if it is already installed:
 `mvn --version`
 if should display something like
 `Apache Maven X.X.X`
-⋅⋅* If it is not installed, please follow instructions here: http://maven.apache.org/download.cgi 
+If it is not installed, please follow instructions here: http://maven.apache.org/download.cgi 
 2. Go to the project root.
 3. Type the following command:
 `mvn clean package`
