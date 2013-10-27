@@ -3,6 +3,12 @@ Election SMS
 
 Web application sending bulk SMS to a group of election observers, via Magti web services.
 
+### Fill up application.propertie with Magti WS details
+Before packaging and deploying the app, you must specify Magti's webservice details:
+
+1. Open /src/main/resources/application.properties
+2. For each line, replace \*\*** with the appropriate information Magti provided to you.
+
 ### How to package the application
 
 Once you have cloned the application onto your machine, go throught the following steps:
