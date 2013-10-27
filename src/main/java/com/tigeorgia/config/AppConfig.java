@@ -11,6 +11,7 @@ import javax.xml.transform.Source;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -33,6 +34,7 @@ import com.tigeorgia.webservice.MagtiClient;
 @EnableTransactionManagement
 @PropertySource("classpath:application.properties")
 @ComponentScan("com.tigeorgia")
+@ImportResource("classpath:spring-security.xml")
 public class AppConfig extends WebMvcConfigurerAdapter{
 	
 	@Resource
