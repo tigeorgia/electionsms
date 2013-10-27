@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,6 +16,7 @@ import com.tigeorgia.model.Message;
 import com.tigeorgia.model.Person;
 import com.tigeorgia.model.Summary;
 import com.tigeorgia.util.Constants;
+import com.tigeorgia.util.Utilities;
 import com.tigeorgia.webservice.MagtiClient;
 
 @Controller
@@ -121,12 +123,20 @@ public class SendMessageController {
 	}
 
 	private List<String> initGroups(){
-		List<String> groups = new ArrayList<String>();
-		String[] groupList = Constants.LIST_OF_GROUPS.split(",");
 		
-		for (String group : groupList){
-			groups.add(group);
+		List<Person> recipientList = Utilities.getListOfRecipients(logger);
+		List<String> groups = null;
+		
+		if (recipientList != null){
+			groups = new ArrayList<String>();
+			for (Person recipient : recipientList){
+				String group = StringUtils.capitalize(recipient.getGroup().toLowerCase());
+				if (!groups.contains(group)){
+					groups.add(group);
+				}
+			}
 		}
+	
 		return groups;
 		
 	}

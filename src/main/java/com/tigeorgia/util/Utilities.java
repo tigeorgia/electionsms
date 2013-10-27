@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.springframework.util.StringUtils;
 
 import com.tigeorgia.model.Person;
 
@@ -48,7 +49,7 @@ public class Utilities {
 							}
 							person.setNumbers(numbers);
 
-							person.setGroup(splitLine[2]);
+							person.setGroup(StringUtils.capitalize(splitLine[2].toLowerCase()));
 
 							recipients.add(person);
 						}
@@ -73,16 +74,5 @@ public class Utilities {
 		
 		return recipients;
 	}
-
-	/*public static InputStream getRecipientFile(Logger logger){
-		//InputStream inputStream = getClass().getClassLoader().getResourceAsStream("PhoneNumberList.csv");
-		InputStream inputStream = null;
-		try {
-			inputStream = new FileInputStream("/tmp/PhoneNumberList.csv");
-		} catch (FileNotFoundException e) {
-			logger.error("Could not find /tmp/PhoneNumberList.csv (file not available)",e);
-		}
-		return inputStream;
-	}*/
 
 }
