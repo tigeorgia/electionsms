@@ -82,7 +82,8 @@ public class AppConfig extends WebMvcConfigurerAdapter{
 	public MagtiClient magtiClient(){
 		MagtiClient magtiClient = new MagtiClient();
 		
-		magtiClient.setMagtiWebserviceEndpoint(env.getRequiredProperty("magti.webservice.endpoint"));
+		String params = "username={username}&password={password}&client_id={client_id}&service_id={service_id}&to={to}&text={text}";
+		magtiClient.setMagtiWebserviceEndpoint(env.getRequiredProperty("magti.webservice.endpoint") + params);
 		
 		Map<String,String> variables = new HashMap<String,String>();
 		variables.put("username", env.getRequiredProperty("magti.username"));
