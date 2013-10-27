@@ -32,9 +32,8 @@ public class MagtiClient {
 
 	public Summary sendMessages(Message message) {
 
-		//InputStream inputStream = getClass().getClassLoader().getResourceAsStream("PhoneNumberList.csv");
-		//InputStream inputStream  = Utilities.getRecipientFile(logger);
 		List<Person> recipients = Utilities.getListOfRecipients(logger);
+		
 		Summary summary = null;
 		if (recipients != null){
 			String magtiResponse = null;
@@ -43,7 +42,7 @@ public class MagtiClient {
 				// We have the whole list of recipients, we need to get the chosen ones, 
 				// based on the selected groups.
 				ArrayList<String> chosenGroups = message.getChosenGroups();
-				boolean allGroups = (chosenGroups.size() == Constants.TOTAL_NUMBER_OF_GROUPS);
+				boolean allGroups = (chosenGroups.size() == Constants.TOTAL_NUMBER_OF_GROUPS);				
 				List<Person> peopleWhoDidntReceive = new ArrayList<Person>();
 				int countTotalMessageSent = 0;
 				int countSuccess = 0;
@@ -54,17 +53,26 @@ public class MagtiClient {
 						// Recipient is in chosen group, we send the message.
 						ArrayList<String> recipientNumbers = recipient.getNumbers();
 						// TODO: take care of the 2nd number, if any.
-						wsVariables.put("to", recipientNumbers.get(0));
+						wsVariables.put("to", "995"+recipientNumbers.get(0));
 						wsVariables.put("text", message.getBody());
 
 						magtiResponse = restTemplate.getForObject(magtiWebserviceEndpoint, String.class, wsVariables);
 						countTotalMessageSent++;
-						if (magtiResponse.equalsIgnoreCase(Constants.MAGTI_WSCODE_SUCCESS)){
+						
+						String[] responses = magtiResponse.split(" - ");
+						String statusCode = null;
+						if (responses != null && responses.length == 2){
+							statusCode = responses[0].trim();
+						}else{
+							statusCode = magtiResponse;
+						}
+						
+						if (statusCode.equalsIgnoreCase(Constants.MAGTI_WSCODE_SUCCESS)){
 							countSuccess++;
 						}else{
 							countFail++;
 							Person recipientDidntReceive = new Person(recipient.getName(), recipient.getNumbers(), recipient.getGroup());
-							recipientDidntReceive.setErrorCode(magtiResponse);
+							recipientDidntReceive.setErrorCode(statusCode);
 							peopleWhoDidntReceive.add(recipientDidntReceive);
 						}
 
@@ -72,7 +80,7 @@ public class MagtiClient {
 				}
 				summary.setFailNumber(countFail);
 				summary.setSuccessNumber(countSuccess);
-				summary.setSuccessNumber(countTotalMessageSent);
+				summary.setTotalNumber(countTotalMessageSent);
 				summary.setDidntReceive(peopleWhoDidntReceive);
 			}
 		}

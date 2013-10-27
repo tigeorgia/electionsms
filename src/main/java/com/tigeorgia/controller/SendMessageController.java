@@ -79,7 +79,7 @@ public class SendMessageController {
 						logger.info(message);
 						
 						// Second line: success and fails.
-						message = Constants.MESSAGE_TAG + "Success: " + summary.getSuccessNumber()  + "/" + summary.getTotalNumber();;
+						message = Constants.MESSAGE_TAG + " Success: " + summary.getSuccessNumber()  + "/" + summary.getTotalNumber();;
 						if (summary.getFailNumber() > 0){
 							message += " - Fail: " + summary.getFailNumber() + "/" + summary.getTotalNumber();
 						}
@@ -88,17 +88,19 @@ public class SendMessageController {
 						
 						// Third line: if there is any fails
 						if (summary.getFailNumber() > 0){
-							logger.info(Constants.MESSAGE_TAG + "People who did not receive message:");
+							logger.info(Constants.MESSAGE_TAG + " People who did not receive message:");
 							int i=0;
 							for (Person person : summary.getDidntReceive()){
+								i++;
 								logger.info(Constants.MESSAGE_TAG + " ### " + i + ") " + person.getName() + " - " + person.getNumbers().get(0) + 
 										" - Error code: " + person.getErrorCode());
 							}
 							model.addAttribute("didntReceiveMessage", " Your message has been sent, but " + summary.getFailNumber() + " people did not receive the message (see logs)");
-						}					
+						}else{
+							model.addAttribute("validMessage", "Your message has been sent to all the recipients you selected.");
+						}
 						
 						logger.info(Constants.MESSAGE_TAG + "------------------------------");
-						model.addAttribute("validMessage", "Your message has been sent to everybody.");
 						model.addAttribute("messageModel", new Message());
 					}else{
 						model.addAttribute("errorMessage", "The list of recipients (CSV file) could not be read"); 

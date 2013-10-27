@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.xml.SourceHttpMessageConverter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
@@ -59,28 +60,12 @@ public class AppConfig extends WebMvcConfigurerAdapter{
         configurer.enable();
     }
 	
-	/*@Bean
-	public RestTemplate restTemplate(){
-		RestTemplate restTemplate = new RestTemplate();
-		Jaxb2Marshaller xmlMarshaller = new Jaxb2Marshaller();
-		//xmlMarshaller.setClassesToBeBound(classesToBeBound);
-		
-		MarshallingHttpMessageConverter messageConverters = new MarshallingHttpMessageConverter();
-		messageConverters.setMarshaller(xmlMarshaller);
-		messageConverters.setUnmarshaller(xmlMarshaller);
-		List<HttpMessageConverter<?>> converters = new ArrayList<HttpMessageConverter<?>>();
-		converters.add(messageConverters);
-		
-		restTemplate.setMessageConverters(converters);
-		
-		return restTemplate;
-	}*/
-	
 	@Bean
 	public RestTemplate restTemplate(){
 		RestTemplate restTemplate = new RestTemplate();
 		List<HttpMessageConverter<?>> converters = new ArrayList<HttpMessageConverter<?>>();
 		converters.add(new SourceHttpMessageConverter<Source>());
+		converters.add(new StringHttpMessageConverter());
 		restTemplate.setMessageConverters(converters);
 		return restTemplate;
 		
@@ -94,7 +79,8 @@ public class AppConfig extends WebMvcConfigurerAdapter{
 	@Bean
 	public MagtiClient magtiClient(){
 		MagtiClient magtiClient = new MagtiClient();
-		String params = "?username=${username}&password=${password}&client_id=${client_id}&service_id=${service_id}&to=${to}&text=${text}";
+		
+		String params = "?username={username}&password={password}&client_id={client_id}&service_id={service_id}&to={to}&text={text}";
 		magtiClient.setMagtiWebserviceEndpoint(env.getRequiredProperty("magti.webservice.endpoint") + params);
 		
 		Map<String,String> variables = new HashMap<String,String>();
@@ -102,6 +88,8 @@ public class AppConfig extends WebMvcConfigurerAdapter{
 		variables.put("password", env.getRequiredProperty("magti.password"));
 		variables.put("client_id", env.getRequiredProperty("magti.clientid"));
 		variables.put("service_id", env.getRequiredProperty("magti.serviceid"));
+		
+		magtiClient.setWsVariables(variables);
 		
 		return magtiClient;
 	}
