@@ -8,6 +8,7 @@ public class Summary {
 	private int successNumber;
 	private int totalNumber;
 	private List<Person> didntReceive;
+	private int totalNumberOfGroups;
 	
 	public List<Person> getDidntReceive() {
 		return didntReceive;
@@ -33,5 +34,12 @@ public class Summary {
 	public void setTotalNumber(int totalNumber) {
 		this.totalNumber = totalNumber;
 	}
+	public int getTotalNumberOfGroups() {
+		return totalNumberOfGroups;
+	}
+	public void setTotalNumberOfGroups(int totalNumberOfGroups) {
+		this.totalNumberOfGroups = totalNumberOfGroups;
+	}
+	
 	
 }

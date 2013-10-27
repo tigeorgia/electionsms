@@ -42,7 +42,9 @@ public class MagtiClient {
 				// We have the whole list of recipients, we need to get the chosen ones, 
 				// based on the selected groups.
 				ArrayList<String> chosenGroups = message.getChosenGroups();
-				boolean allGroups = (chosenGroups.size() == Constants.TOTAL_NUMBER_OF_GROUPS);				
+				int totalNumberOfGroups = Utilities.totalNumberOfGroups(recipients);
+				summary.setTotalNumberOfGroups(totalNumberOfGroups);
+				boolean allGroups = (chosenGroups.size() == totalNumberOfGroups);				
 				List<Person> peopleWhoDidntReceive = new ArrayList<Person>();
 				int countTotalMessageSent = 0;
 				int countSuccess = 0;

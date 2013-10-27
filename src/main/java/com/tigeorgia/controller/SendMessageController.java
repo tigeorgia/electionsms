@@ -69,7 +69,7 @@ public class SendMessageController {
 						// First line: text + recipient groups.
 						String message = Constants.MESSAGE_TAG + " Message sent: " + messageBody 
 								+ " - recipients: ";
-						if (messageGroups.size() == Constants.TOTAL_NUMBER_OF_GROUPS){
+						if (messageGroups.size() == summary.getTotalNumberOfGroups()){
 							message += "All";
 						}else{
 							for (String group : messageGroups){

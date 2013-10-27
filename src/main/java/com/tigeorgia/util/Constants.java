@@ -9,11 +9,6 @@ public class Constants {
 	public static final String RECIPIENT_LIST_VIEW = "recipientlist";
 	
 	public static final String MESSAGE_TAG = "SENTMESSAGE";
-	
-	public static final int TOTAL_NUMBER_OF_GROUPS = 11;
-	
-	public static final String LIST_OF_GROUPS = "Ajara,Guria,Tbilisi,Imereti,Kakheti,"
-			+ "Mtskheta-Mtianeti,Samegrelo,Samtskhe-Javakheti,Kvemo Kartli,Shida Kartli,Mobile";
 
 	public static final String MAGTI_WSCODE_SUCCESS = "0000";
 	public static final String MAGTI_WSCODE_INTERNAL_ERROR = "0001";

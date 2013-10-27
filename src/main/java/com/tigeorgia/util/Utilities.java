@@ -74,5 +74,26 @@ public class Utilities {
 		
 		return recipients;
 	}
+	
+	public static int totalNumberOfGroups(List<Person> recipientsList){
+		List<String> groups = null;
+		int result = 0;
+		if (recipientsList != null){
+			groups = new ArrayList<String>();
+			for (Person recipient : recipientsList){
+				String group = StringUtils.capitalize(recipient.getGroup().toLowerCase());
+				if (!groups.contains(group)){
+					groups.add(group);
+				}
+			}
+		}
+	
+		if(groups != null){
+			result = groups.size();
+		}
+		
+		return result;
+			
+	}
 
 }
