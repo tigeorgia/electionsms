@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.tigeorgia.util.Constants;
 
 @Controller
-
 public class HomeController {
 	
 	/**

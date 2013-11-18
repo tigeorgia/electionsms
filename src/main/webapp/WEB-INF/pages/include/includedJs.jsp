@@ -1,5 +1,7 @@
 <!-- jQuery -->
 	<script src="${pageContext.request.contextPath}/resources/js/jquery-1.7.2.min.js" type="text/javascript"></script>
+	<!-- jQuery -->
+	<script src="${pageContext.request.contextPath}/resources/js/charisma.js" type="text/javascript"></script>
 	<!-- jQuery UI -->
 	<script src="${pageContext.request.contextPath}/resources/js/jquery-ui-1.8.21.custom.min.js" type="text/javascript"></script>
 	<!-- transition / effect library -->
@@ -62,7 +64,7 @@
 	<!-- autogrowing textarea plugin -->
 	<script src="${pageContext.request.contextPath}/resources/js/jquery.autogrow-textarea.js" type="text/javascript"></script>
 	<!-- multiple file upload plugin -->
-	<!-- <script src="${pageContext.request.contextPath}/resources/js/jquery.uploadify-3.1.min.js" type="text/javascript"></script> -->
+	<script src="${pageContext.request.contextPath}/resources/js/jquery.uploadify-3.1.min.js" type="text/javascript"></script>
 	<!-- history.js for cross-browser state change on ajax -->
 	<script src="${pageContext.request.contextPath}/resources/js/jquery.history.js" type="text/javascript"></script>
 	<!-- application script for Charisma demo -->

@@ -31,17 +31,17 @@
 	</style>
 	<link href="<spring:url value='/resources/css/bootstrap-responsive.css'/>" rel="stylesheet" type="text/css"/>
 	<link href="<spring:url value='/resources/css/charisma-app.css'/>" rel="stylesheet" type="text/css"/>
-	<link href="<spring:url value='/resources/css/jquery-ui-1.8.21.custom.css'/>" rel="stylesheet"type="text/css"/>
-	<link href="<spring:url value='/resources/css/chosen.css'/>" rel='stylesheet' type="text/css"/>
+	<!-- <link href="<spring:url value='/resources/css/jquery-ui-1.8.21.custom.css'/>" rel="stylesheet"type="text/css"/>
+	<link href="<spring:url value='/resources/css/chosen.css'/>" rel='stylesheet' type="text/css"/> -->
 	<link href="<spring:url value='/resources/css/uniform.default.css'/>" rel='stylesheet' type="text/css"/>
-	<link href="<spring:url value='/resources/css/colorbox.css'/>" rel='stylesheet' type="text/css"/>
+	<!-- <link href="<spring:url value='/resources/css/colorbox.css'/>" rel='stylesheet' type="text/css"/> 
 	<link href="<spring:url value='/resources/css/jquery.cleditor.css'/>" rel='stylesheet' type="text/css"/>
 	<link href="<spring:url value='/resources/css/jquery.noty.css'/>" rel='stylesheet' type="text/css"/>
-	<link href="<spring:url value='/resources/css/noty_theme_default.css'/>" rel='stylesheet' type="text/css"/>
+	<link href="<spring:url value='/resources/css/noty_theme_default.css'/>" rel='stylesheet' type="text/css"/> 	
 	<link href="<spring:url value='/resources/css/elfinder.min.css'/>" rel='stylesheet' type="text/css"/>
 	<link href="<spring:url value='/resources/css/elfinder.theme.css'/>" rel='stylesheet' type="text/css"/>
 	<link href="<spring:url value='/resources/css/jquery.iphone.toggle.css'/>" rel='stylesheet' type="text/css"/>
-	<link href="<spring:url value='/resources/css/opa-icons.css'/>" rel='stylesheet' type="text/css"/>
+	<link href="<spring:url value='/resources/css/opa-icons.css'/>" rel='stylesheet' type="text/css"/> -->
 	<link href="<spring:url value='/resources/css/uploadify.css'/>" rel='stylesheet' type="text/css"/>
 
 	<!-- The HTML5 shim, for IE6-8 support of HTML5 elements -->

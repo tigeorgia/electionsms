@@ -19,6 +19,7 @@ import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.xml.SourceHttpMessageConverter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -27,6 +28,7 @@ import org.springframework.web.servlet.view.JstlView;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 import org.springframework.xml.xpath.Jaxp13XPathTemplate;
 
+import com.tigeorgia.validator.UploadedFileValidator;
 import com.tigeorgia.webservice.MagtiClient;
 
 @Configuration
@@ -96,5 +98,14 @@ public class AppConfig extends WebMvcConfigurerAdapter{
 		return magtiClient;
 	}
 	
+	@Bean
+	public UploadedFileValidator fileValidator(){
+		return new UploadedFileValidator(); 
+	}
+	
+	@Bean
+	public CommonsMultipartResolver multipartResolver(){
+		return new CommonsMultipartResolver();
+	}
 
 }

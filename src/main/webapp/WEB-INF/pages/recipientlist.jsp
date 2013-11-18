@@ -36,26 +36,53 @@
 							</h2>
 						</div>
 						<div class="box-content">
+							<div class="control-group">
+								Upload a new CSV file, if you want to work with a new list of contacts.
+							</div>
+							<c:if test="${isUploadedSuccessfully == true }">
+								<div class="alert alert-success">
+									<button type="button" class="close" data-dismiss="alert">×</button>
+									<strong>Success!</strong> The CSV file has been uploaded successfully, and been loaded in the table below.
+								</div>
+							</c:if>
+							<div class="control-group">
+								<form:form modelAttribute="uploadedFile" enctype="multipart/form-data" 
+								id="uploadbanner" action="${pageContext.request.contextPath}/uploadlist"
+								method="POST" class="form-horizontal">
+									<c:if test="${isUploadedSuccessfully == false }">
+										<div class="alert alert-error">
+											<button type="button" class="close" data-dismiss="alert">×</button>
+											<strong>ERROR!</strong> <form:errors path="file" />
+										</div>
+									</c:if>
+									<form:input id="fileupload" type="file" path="file" name="file" /> 
+									<input type="submit" value="Upload" id="submit"  />
+								</form:form>
+							</div>
+						</div>
+						<div class="box-content">
 							<table
 								class="table table-striped table-bordered bootstrap-datatable datatable">
 								<thead>
 									<tr>
 										<th>#</th>
 										<th>Name</th>
+										<th>Language</th>
 										<th>Phone(s)</th>
 										<th>Group</th>
 									</tr>
 								</thead>
 								<tbody>
-									<c:forEach var="person" items="${recipients}" varStatus="loopCount" begin="0">
+									<c:forEach var="person" items="${recipients}"
+										varStatus="loopCount" begin="0">
 										<tr>
 											<td>${loopCount.count}</td>
 											<td>${person.name}</td>
-											<td class="center">
-												<c:forEach var="number" items="${person.numbers}">
+											<td>${person.language}</td>
+											<td class="center"><c:forEach var="number"
+													items="${person.numbers}">
 													${number}&nbsp;
-												</c:forEach>
-											</td>
+												</c:forEach></td>
 											<td>${person.group}</td>
 										</tr>
 									</c:forEach>

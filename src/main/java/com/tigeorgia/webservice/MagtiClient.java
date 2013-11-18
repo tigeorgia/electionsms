@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.xml.xpath.XPathOperations;
 
+import com.tigeorgia.model.CsvFile;
 import com.tigeorgia.model.Message;
 import com.tigeorgia.model.Person;
 import com.tigeorgia.model.Summary;
@@ -32,7 +33,12 @@ public class MagtiClient {
 
 	public Summary sendMessages(Message message) {
 
-		List<Person> recipients = Utilities.getListOfRecipients(logger);
+		CsvFile file = Utilities.getListOfRecipients(logger);
+		
+		List<Person> recipients = null;
+		if (file != null){
+			recipients = file.getRecipients();
+		}
 		
 		Summary summary = null;
 		if (recipients != null){
@@ -73,7 +79,7 @@ public class MagtiClient {
 							countSuccess++;
 						}else{
 							countFail++;
-							Person recipientDidntReceive = new Person(recipient.getName(), recipient.getNumbers(), recipient.getGroup());
+							Person recipientDidntReceive = new Person(recipient.getName(), recipient.getLanguage(), recipient.getNumbers(), recipient.getGroup());
 							recipientDidntReceive.setErrorCode(statusCode);
 							peopleWhoDidntReceive.add(recipientDidntReceive);
 						}

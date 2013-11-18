@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.tigeorgia.model.CsvFile;
 import com.tigeorgia.model.Message;
 import com.tigeorgia.model.Person;
 import com.tigeorgia.model.Summary;
@@ -124,7 +125,11 @@ public class SendMessageController {
 
 	private List<String> initGroups(){
 		
-		List<Person> recipientList = Utilities.getListOfRecipients(logger);
+		CsvFile file = Utilities.getListOfRecipients(logger);
+		List<Person> recipientList = null;
+		if (file != null){
+			recipientList = file.getRecipients();
+		}
 		List<String> groups = null;
 		
 		if (recipientList != null){
