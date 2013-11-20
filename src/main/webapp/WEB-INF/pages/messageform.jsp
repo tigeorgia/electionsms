@@ -64,10 +64,19 @@
 											message here (160 characters max.)</label>
 										<div class="controls">
 											<form:textarea class="message" id="textarea2" rows="8"
-												cols="40" maxlength="160" path="body"></form:textarea>
+												cols="50" maxlength="180" path="body"></form:textarea>
 											<span class="countdown"></span>
 										</div>
 										<div class="controls">
+											<label class="radio"> 
+												<form:radiobutton path="lang" value="ka" /> Georgian
+											</label>
+											<div style="clear:both"></div>
+											<label class="radio">
+												<form:radiobutton path="lang" value="en" /> English
+											</label>
+											
+											<hr>	
 											<label class="checkbox inline"> <input
 												type="checkbox" id="allGroupCheckbox" value="All" /> All
 											</label>

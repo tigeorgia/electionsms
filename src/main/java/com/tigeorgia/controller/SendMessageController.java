@@ -26,6 +26,8 @@ public class SendMessageController {
 	
 	@Autowired
 	private MagtiClient magtiClient;
+	
+	private static final String DEFAULT_LANGUAGE = "ka";
 
 	private static final Logger logger = Logger.getLogger(SendMessageController.class);
 	
@@ -37,7 +39,7 @@ public class SendMessageController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String writeMessage(ModelMap model) {
 		Message message = new Message();
-		
+		message.setLang(DEFAULT_LANGUAGE);
 		model.addAttribute("messageModel", message);
 		model.addAttribute("groups", initGroups());
 		

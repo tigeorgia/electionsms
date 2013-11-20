@@ -48,6 +48,8 @@ public class MagtiClient {
 				// We have the whole list of recipients, we need to get the chosen ones, 
 				// based on the selected groups.
 				ArrayList<String> chosenGroups = message.getChosenGroups();
+				String chosenLanguage = message.getLang();
+				
 				int totalNumberOfGroups = Utilities.totalNumberOfGroups(recipients);
 				summary.setTotalNumberOfGroups(totalNumberOfGroups);
 				boolean allGroups = (chosenGroups.size() == totalNumberOfGroups);				
@@ -57,8 +59,8 @@ public class MagtiClient {
 				int countFail = 0;
 
 				for (Person recipient : recipients){
-					if (allGroups || isInChosenGroup(recipient, chosenGroups)){
-						// Recipient is in chosen group, we send the message.
+					if ((allGroups || isInChosenGroup(recipient, chosenGroups)) && isInChosenLanguage(recipient, chosenLanguage)){
+						// Recipient is in chosen group, and in chosen language: we send the message.
 						ArrayList<String> recipientNumbers = recipient.getNumbers();
 						// TODO: take care of the 2nd number, if any.
 						wsVariables.put("to", "995"+recipientNumbers.get(0));
@@ -104,6 +106,10 @@ public class MagtiClient {
 			}
 		}
 		return false;
+	}
+	
+	private boolean isInChosenLanguage(Person recipient, String lang){
+		return (recipient.getLanguage().equalsIgnoreCase(lang));
 	}
 
 	public String getMagtiWebserviceEndpoint() {
