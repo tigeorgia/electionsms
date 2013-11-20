@@ -2,6 +2,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -61,6 +62,12 @@
 							</div>
 						</div>
 						<div class="box-content">
+							<c:if test="${errorMessage != null}">
+								<div class="alert alert-error">
+									<button type="button" class="close" data-dismiss="alert">×</button>
+										${errorMessage}
+								</div>
+							</c:if>
 							<table
 								class="table table-striped table-bordered bootstrap-datatable datatable">
 								<thead>
@@ -83,7 +90,25 @@
 													items="${person.numbers}">
 													${number}&nbsp;
 												</c:forEach></td>
-											<td>${person.group}</td>
+											
+											<td>
+												<c:choose>
+													<c:when test="${person.groups != null && fn:length(person.groups) gt 1}">
+														<select>
+															<c:forEach var="group"	items="${person.groups}">
+																<option>${group}</option>
+															</c:forEach>
+														</select>
+													</c:when>
+													<c:when test="${person.groups != null && fn:length(person.groups) eq 1}">
+														${person.groups[0]}
+													</c:when>
+													<c:otherwise>
+														No group attached
+													</c:otherwise>
+												</c:choose>
+											
+											</td>
 										</tr>
 									</c:forEach>
 								</tbody>

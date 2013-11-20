@@ -7,16 +7,16 @@ public class Person {
 	private String name;
 	private String language;
 	private ArrayList<String> numbers;
-	private String group;
+	private ArrayList<String> groups;
 	private String errorCode;
 	
 	public Person() {	}
 	
-	public Person(String name, String language, ArrayList<String> numbers, String group) {
+	public Person(String name, String language, ArrayList<String> numbers, ArrayList<String> groups) {
 		this.name = name;
 		this.language = language;
 		this.numbers = numbers;
-		this.group = group;
+		this.groups = groups;
 	}
 	public String getName() {
 		return name;
@@ -30,11 +30,11 @@ public class Person {
 	public void setNumbers(ArrayList<String> numbers) {
 		this.numbers = numbers;
 	}
-	public String getGroup() {
-		return group;
+	public ArrayList<String> getGroups() {
+		return groups;
 	}
-	public void setGroup(String group) {
-		this.group = group;
+	public void setGroups(ArrayList<String> groups) {
+		this.groups = groups;
 	}
 	public String getErrorCode() {
 		return errorCode;

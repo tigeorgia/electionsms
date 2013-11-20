@@ -79,7 +79,7 @@ public class MagtiClient {
 							countSuccess++;
 						}else{
 							countFail++;
-							Person recipientDidntReceive = new Person(recipient.getName(), recipient.getLanguage(), recipient.getNumbers(), recipient.getGroup());
+							Person recipientDidntReceive = new Person(recipient.getName(), recipient.getLanguage(), recipient.getNumbers(), recipient.getGroups());
 							recipientDidntReceive.setErrorCode(statusCode);
 							peopleWhoDidntReceive.add(recipientDidntReceive);
 						}
@@ -97,9 +97,9 @@ public class MagtiClient {
 	}
 
 	private boolean isInChosenGroup(Person recipient, ArrayList<String> chosenGroups){
-		String personGroup = recipient.getGroup();
+		ArrayList<String> personGroups = recipient.getGroups();
 		for (String group : chosenGroups){
-			if (personGroup.equalsIgnoreCase(group)){
+			if (personGroups.contains(group)){
 				return true;
 			}
 		}

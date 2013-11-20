@@ -68,8 +68,18 @@ public class Utilities {
 							person.setNumbers(numbers);
 							
 							String[] splitGroups = splitLine[3].split("\\|");
-							person.setGroup(splitGroups[0].replaceAll("\"", ""));
-
+							
+							ArrayList<String> groups = null;
+							if (splitGroups != null && splitGroups.length > 0){
+								groups = new ArrayList<String>();
+								for (String group : splitGroups){
+									groups.add(group.replaceAll("\"", ""));
+								}
+								person.setGroups(groups);
+							}else{
+								person.setGroups(null);
+							}
+							
 							recipients.add(person);
 						}else{
 							// the CSV file is not well formatted, we need to raise an error
@@ -87,6 +97,7 @@ public class Utilities {
 			}
 		} catch (FileNotFoundException e) {
 			logger.error("Could not find /tmp/PhoneNumberList.csv (file not available)",e);
+			errorMessage = "Contact list not available: no CSV file was found.";
 		} catch (IOException e) {
 			errorMessage = "The list of recipients (CSV file) could not be read.";
 			logger.error(errorMessage, e);
@@ -112,9 +123,12 @@ public class Utilities {
 		if (recipientsList != null){
 			groups = new ArrayList<String>();
 			for (Person recipient : recipientsList){
-				String group = StringUtils.capitalize(recipient.getGroup().toLowerCase());
-				if (!groups.contains(group)){
-					groups.add(group);
+				ArrayList<String> personGroups = recipient.getGroups();
+				for (String group : personGroups){
+					group = StringUtils.capitalize(group.toLowerCase());
+					if (!groups.contains(group)){
+						groups.add(group);
+					}
 				}
 			}
 		}

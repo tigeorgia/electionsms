@@ -46,7 +46,9 @@ public class ShowListController {
 			recipients = file.getRecipients();
 		}
 
-		if (recipients == null){
+		if (file.getErrorMessage() != null){
+			model.addAttribute("errorMessage", file.getErrorMessage());
+		}else if (recipients == null){
 			model.addAttribute("errorMessage", "There was a problem while trying to retrieve the recipient list.");
 		}
 		model.addAttribute("recipients", recipients);

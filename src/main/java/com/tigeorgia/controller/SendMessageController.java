@@ -123,6 +123,10 @@ public class SendMessageController {
 		return Constants.SEND_MESSAGE_VIEW;
 	}
 
+	/**
+	 * This method lists all the group names to be displayed on the "Send message" page, based off of the CSV file.
+	 * @return
+	 */
 	private List<String> initGroups(){
 		
 		CsvFile file = Utilities.getListOfRecipients(logger);
@@ -135,9 +139,12 @@ public class SendMessageController {
 		if (recipientList != null){
 			groups = new ArrayList<String>();
 			for (Person recipient : recipientList){
-				String group = StringUtils.capitalize(recipient.getGroup().toLowerCase());
-				if (!groups.contains(group)){
-					groups.add(group);
+				ArrayList<String> personGroups = recipient.getGroups();
+				for (String group : personGroups){
+					group = StringUtils.capitalize(group.toLowerCase());
+					if (!groups.contains(group)){
+						groups.add(group);
+					}
 				}
 			}
 		}
