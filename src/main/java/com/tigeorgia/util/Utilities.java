@@ -19,12 +19,21 @@ import com.tigeorgia.model.Person;
 
 public class Utilities {
 	
+	public static final String PARLIAMENT_CONTACT_TYPE = "parliament";
+	public static final String ELECTION_CONTACT_TYPE = "election";
+	
 	public static CsvFile checkUploadedListOfRecipients(MultipartFile file, Logger logger){
 		return processListOfRecipients(logger, null, file);
 	}
 	
-	public static CsvFile getListOfRecipients(Logger logger) {
-		String path = "/tmp/PhoneNumberList.csv";
+	public static CsvFile getListOfRecipients(Logger logger, String contactType) {
+		String path = null;
+		if (contactType.equalsIgnoreCase(PARLIAMENT_CONTACT_TYPE)){
+			path = "/tmp/ParliamentPhoneNumberList.csv";
+		}else if (contactType.equalsIgnoreCase(ELECTION_CONTACT_TYPE)){
+			path = "/tmp/ElectionPhoneNumberList.csv";
+		}
+		
 		return processListOfRecipients(logger, path, null);
 	}
 
@@ -97,9 +106,9 @@ public class Utilities {
 			}
 		} catch (FileNotFoundException e) {
 			logger.error("Could not find /tmp/PhoneNumberList.csv (file not available)",e);
-			errorMessage = "Contact list not available: no CSV file was found.";
+			errorMessage = "Contact list not available: no CSV file was found";
 		} catch (IOException e) {
-			errorMessage = "The list of recipients (CSV file) could not be read.";
+			errorMessage = "The list of recipients (CSV file) could not be read";
 			logger.error(errorMessage, e);
 		} finally{
 			// releases system resources associated with this stream

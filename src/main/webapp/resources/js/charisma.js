@@ -117,7 +117,7 @@ function docReady(){
 
 
 	//uniform - styler for checkbox, radio and file input
-	$("input:checkbox, input:radio, input:file").not('[data-no-uniform="true"],#uniform-is-ajax').uniform();
+	//$("input:checkbox, input:radio, input:file").not('[data-no-uniform="true"],#uniform-is-ajax').uniform();
 
 	//chosen - improves select
 	$('[data-rel="chosen"],[rel="chosen"]').chosen();

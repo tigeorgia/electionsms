@@ -6,7 +6,8 @@ public class Message {
 	
 	private String body;
 	private String lang;
-	private ArrayList<String> chosenGroups;
+	private ArrayList<String> chosenParliamentaryGroups;
+	private ArrayList<String> chosenElectionGroups;
 
 	public String getBody() {
 		return body;
@@ -24,12 +25,21 @@ public class Message {
 		this.lang = lang;
 	}
 
-	public ArrayList<String> getChosenGroups() {
-		return chosenGroups;
+	public ArrayList<String> getChosenParliamentaryGroups() {
+		return chosenParliamentaryGroups;
 	}
 
-	public void setChosenGroups(ArrayList<String> chosenGroups) {
-		this.chosenGroups = chosenGroups;
-	}	
-	
+	public void setChosenParliamentaryGroups(
+			ArrayList<String> chosenParliamentaryGroups) {
+		this.chosenParliamentaryGroups = chosenParliamentaryGroups;
+	}
+
+	public ArrayList<String> getChosenElectionGroups() {
+		return chosenElectionGroups;
+	}
+
+	public void setChosenElectionGroups(ArrayList<String> chosenElectionGroups) {
+		this.chosenElectionGroups = chosenElectionGroups;
+	}
+
 }

@@ -2,5 +2,6 @@ target
 .settings
 .classpath
 .project
-src/main/resources/PhoneNumberList*.csv
+src/main/resources/*PhoneNumberList*.csv
+src/main/resources/*PhoneNumbersList*.csv
 application.properties

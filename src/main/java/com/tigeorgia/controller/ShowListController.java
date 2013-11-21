@@ -28,7 +28,7 @@ import com.tigeorgia.validator.UploadedFileValidator;
 public class ShowListController {
 
 	private static final Logger logger = Logger.getLogger(ShowListController.class);
-
+	
 	@Autowired  
 	UploadedFileValidator fileValidator;  
 
@@ -40,22 +40,30 @@ public class ShowListController {
 	@RequestMapping(value="/showlist", method = RequestMethod.GET)
 	public String showlist(ModelMap model) {
 
-		CsvFile file = Utilities.getListOfRecipients(logger);
+		model.addAttribute("electionRecipients", getRecipientListFromOneFile(Utilities.ELECTION_CONTACT_TYPE, model));
+		model.addAttribute("parliamentRecipients", getRecipientListFromOneFile(Utilities.PARLIAMENT_CONTACT_TYPE, model));
+		
+		UploadedFile uploadFile = new UploadedFile();
+		uploadFile.setContactType(Utilities.PARLIAMENT_CONTACT_TYPE);
+		model.addAttribute("uploadedFile", uploadFile);
+
+		return Constants.RECIPIENT_LIST_VIEW;
+
+	}
+	
+	private List<Person> getRecipientListFromOneFile(String contactType, ModelMap model){
+		CsvFile file = Utilities.getListOfRecipients(logger, contactType);
 		List<Person> recipients = null;
 		if (file != null){
 			recipients = file.getRecipients();
 		}
 
 		if (file.getErrorMessage() != null){
-			model.addAttribute("errorMessage", file.getErrorMessage());
+			model.addAttribute("errorMessage"+contactType, file.getErrorMessage() + " (" + contactType + ")");
 		}else if (recipients == null){
-			model.addAttribute("errorMessage", "There was a problem while trying to retrieve the recipient list.");
+			model.addAttribute("errorMessage"+contactType, "There was a problem while trying to retrieve the recipient list (" + contactType + ")");
 		}
-		model.addAttribute("recipients", recipients);
-		model.addAttribute("uploadedFile", new UploadedFile());
-
-		return Constants.RECIPIENT_LIST_VIEW;
-
+		return recipients;
 	}
 
 	@RequestMapping(value="/uploadlist", method = RequestMethod.POST)
@@ -75,9 +83,20 @@ public class ShowListController {
 			model.addAttribute("isUploadedSuccessfully", false);
 		}else{
 			try {  
-				inputStream = file.getInputStream();  
+				
+				String contactType = uploadedFile.getContactType();
+				String filePath = null;
+				
+				inputStream = file.getInputStream();
+				
+				if (contactType.equalsIgnoreCase(Utilities.ELECTION_CONTACT_TYPE)){
+					filePath = "/tmp/ElectionPhoneNumberList.csv";
+				}else if (contactType.equalsIgnoreCase(Utilities.PARLIAMENT_CONTACT_TYPE)){
+					filePath = "/tmp/ParliamentPhoneNumberList.csv";
+				}
 
-				File newFile = new File("/tmp/PhoneNumberList.csv");  
+				// Creating new file here
+				File newFile = new File(filePath);  
 				if (!newFile.exists()) {  
 					newFile.createNewFile();
 				}else{
@@ -86,7 +105,7 @@ public class ShowListController {
 						backupFile.delete();
 					}
 					newFile.renameTo(new File("/tmp/" + fileName+".old"));
-					newFile = new File("/tmp/PhoneNumberList.csv");
+					newFile = new File(filePath);
 				}
 
 				outputStream = new FileOutputStream(newFile);  
@@ -102,7 +121,7 @@ public class ShowListController {
 				try {
 					outputStream.close();
 				} catch (IOException e) {
-					logger.error("Problem closing OutpuStream.");
+					logger.error("Problem closing OutputStream.");
 				}
 			}
 			model.addAttribute("isUploadedSuccessfully", true);
@@ -116,17 +135,13 @@ public class ShowListController {
 		}
 
 		// Loading the current CSV file (whether or not the upload succeeded)
-		CsvFile csvfile = Utilities.getListOfRecipients(logger);
-		List<Person> recipients = null;
-		if (csvfile != null){
-			recipients = csvfile.getRecipients();
-		}
-
-		if (recipients == null){
-			model.addAttribute("errorMessage", "There was a problem while trying to retrieve the recipient list, after upload was complete");
-		}
-
-		model.addAttribute("recipients", recipients);
+		model.addAttribute("electionRecipients", getRecipientListFromOneFile(Utilities.ELECTION_CONTACT_TYPE, model));
+		model.addAttribute("parliamentRecipients", getRecipientListFromOneFile(Utilities.PARLIAMENT_CONTACT_TYPE, model));
+		
+		// Reinitializing upload object
+		UploadedFile uploadFile = new UploadedFile();
+		uploadFile.setContactType(Utilities.PARLIAMENT_CONTACT_TYPE);
+		model.addAttribute("uploadedFile", uploadFile);
 
 		return Constants.RECIPIENT_LIST_VIEW;
 

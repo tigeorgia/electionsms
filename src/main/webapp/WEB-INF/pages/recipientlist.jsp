@@ -28,17 +28,17 @@
 						<li>Show recipients</li>
 					</ul>
 				</div>
-
+				
 				<div class="row-fluid sortable">
 					<div class="box span12">
 						<div class="box-header well" data-original-title>
 							<h2>
-								<i class="icon-user"></i> List of recipients
+								<i class="icon-user"></i> Upload contacts
 							</h2>
 						</div>
 						<div class="box-content">
 							<div class="control-group">
-								Upload a new CSV file, if you want to work with a new list of contacts.
+								Upload a new CSV file, and select the type of contact (Parliament or Election), if you want to work with a new list of contacts.
 							</div>
 							<c:if test="${isUploadedSuccessfully == true }">
 								<div class="alert alert-success">
@@ -58,14 +58,36 @@
 									</c:if>
 									<form:input id="fileupload" type="file" path="file" name="file" /> 
 									<input type="submit" value="Upload" id="submit"  />
+									<div class="controls">
+										<label class="radio"> 
+											<form:radiobutton path="contactType" value="parliament" /> Parliamentary contacts
+										</label>
+										<div style="clear:both"></div>
+										<label class="radio">
+											<form:radiobutton path="contactType" value="election" /> Election contacts
+										</label>
+									</div>
 								</form:form>
 							</div>
 						</div>
+					</div>
+				</div>
+				
+				<div class="row-fluid sortable">
+					<div class="box span12">
+						<div class="box-header well" data-original-title>
+							<h2>
+								<i class="icon-user"></i> Parliamentary contacts
+							</h2>
+							<div class="box-icon">
+								<a href="#" class="btn btn-minimize btn-round"><i class="icon-chevron-up"></i></a>
+							</div>
+						</div>
 						<div class="box-content">
-							<c:if test="${errorMessage != null}">
+							<c:if test="${errorMessageparliament != null}">
 								<div class="alert alert-error">
 									<button type="button" class="close" data-dismiss="alert">×</button>
-										${errorMessage}
+										${errorMessageparliament}
 								</div>
 							</c:if>
 							<table
@@ -80,7 +102,7 @@
 									</tr>
 								</thead>
 								<tbody>
-									<c:forEach var="person" items="${recipients}"
+									<c:forEach var="person" items="${parliamentRecipients}"
 										varStatus="loopCount" begin="0">
 										<tr>
 											<td>${loopCount.count}</td>
@@ -90,7 +112,6 @@
 													items="${person.numbers}">
 													${number}&nbsp;
 												</c:forEach></td>
-											
 											<td>
 												<c:choose>
 													<c:when test="${person.groups != null && fn:length(person.groups) gt 1}">
@@ -107,7 +128,6 @@
 														No group attached
 													</c:otherwise>
 												</c:choose>
-											
 											</td>
 										</tr>
 									</c:forEach>
@@ -116,9 +136,73 @@
 						</div>
 					</div>
 					<!--/span-->
-
 				</div>
 				<!--/row-->
+				
+				<div class="row-fluid sortable">
+					<div class="box span12">
+						<div class="box-header well" data-original-title>
+							<h2>
+								<i class="icon-user"></i> Election contacts
+							</h2>
+							<div class="box-icon">
+								<a href="#" class="btn btn-minimize btn-round"><i class="icon-chevron-up"></i></a>
+							</div>
+						</div>
+						<div class="box-content">
+							<c:if test="${errorMessageelection != null}">
+								<div class="alert alert-error">
+									<button type="button" class="close" data-dismiss="alert">×</button>
+										${errorMessageelection}
+								</div>
+							</c:if>
+							<table
+								class="table table-striped table-bordered bootstrap-datatable datatable">
+								<thead>
+									<tr>
+										<th>#</th>
+										<th>Name</th>
+										<th>Language</th>
+										<th>Phone(s)</th>
+										<th>Group</th>
+									</tr>
+								</thead>
+								<tbody>
+									<c:forEach var="person" items="${electionRecipients}"
+										varStatus="loopCount" begin="0">
+										<tr>
+											<td>${loopCount.count}</td>
+											<td>${person.name}</td>
+											<td>${person.language}</td>
+											<td class="center"><c:forEach var="number"
+													items="${person.numbers}">
+													${number}&nbsp;
+												</c:forEach></td>
+											<td>
+												<c:choose>
+													<c:when test="${person.groups != null && fn:length(person.groups) gt 1}">
+														<select>
+															<c:forEach var="group"	items="${person.groups}">
+																<option>${group}</option>
+															</c:forEach>
+														</select>
+													</c:when>
+													<c:when test="${person.groups != null && fn:length(person.groups) eq 1}">
+														${person.groups[0]}
+													</c:when>
+													<c:otherwise>
+														No group attached
+													</c:otherwise>
+												</c:choose>
+											</td>
+										</tr>
+									</c:forEach>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<!--/span-->
+				</div>
 
 			</div>
 			<!--/#content.span10-->

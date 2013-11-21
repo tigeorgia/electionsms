@@ -47,7 +47,7 @@
 	<!-- select or dropdown enhancer -->
 	<script src="${pageContext.request.contextPath}/resources/js/jquery.chosen.min.js" type="text/javascript"></script>
 	<!-- checkbox, radio, and file input styler -->
-	<script src="${pageContext.request.contextPath}/resources/js/jquery.uniform.min.js" type="text/javascript"></script>
+	<!-- <script src="${pageContext.request.contextPath}/resources/js/jquery.uniform.min.js" type="text/javascript"></script> -->
 	<!-- plugin for gallery image view -->
 	<script src="${pageContext.request.contextPath}/resources/js/jquery.colorbox.min.js" type="text/javascript"></script>
 	<!-- rich text editor library -->

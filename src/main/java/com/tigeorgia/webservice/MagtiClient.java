@@ -31,9 +31,9 @@ public class MagtiClient {
 
 	private static final Logger logger = Logger.getLogger(MagtiClient.class);
 
-	public Summary sendMessages(Message message) {
+	public Summary sendMessages(Message message, String contactType) {
 
-		CsvFile file = Utilities.getListOfRecipients(logger);
+		CsvFile file = Utilities.getListOfRecipients(logger, contactType);
 		
 		List<Person> recipients = null;
 		if (file != null){
@@ -47,7 +47,12 @@ public class MagtiClient {
 			if (recipients != null && recipients.size() > 0){
 				// We have the whole list of recipients, we need to get the chosen ones, 
 				// based on the selected groups.
-				ArrayList<String> chosenGroups = message.getChosenGroups();
+				ArrayList<String> chosenGroups = null;
+				if (contactType.equalsIgnoreCase(Utilities.ELECTION_CONTACT_TYPE)){
+					chosenGroups = message.getChosenElectionGroups();
+				}else if (contactType.equalsIgnoreCase(Utilities.PARLIAMENT_CONTACT_TYPE)){
+					chosenGroups = message.getChosenParliamentaryGroups();
+				}
 				String chosenLanguage = message.getLang();
 				
 				int totalNumberOfGroups = Utilities.totalNumberOfGroups(recipients);

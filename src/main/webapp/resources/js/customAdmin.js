@@ -2,12 +2,19 @@ $(document).ready(function(){
 	
 	updateCountdown();
 	$('#textarea2').live('input', updateCountdown);
-	
-	$('#allGroupCheckbox').click(function () {
-		if ($('#allGroupCheckbox').is(':checked')) {
-			$(".groupCheckbox").prop('checked', true);
+	$("#allParliamentGroupCheckbox").click(function () {
+		if ($("#allParliamentGroupCheckbox").is(':checked')) {
+			$(".groupParliamentCheckbox").prop('checked', true);
 		}else{
-			$(".groupCheckbox").prop('checked', false);
+			$(".groupParliamentCheckbox").prop('checked', false);
+		}
+	});
+	
+	$('#allElectionGroupCheckbox').click(function () {
+		if ($('#allElectionGroupCheckbox').is(':checked')) {
+			$(".groupElectionCheckbox").prop('checked', true);
+		}else{
+			$(".groupElectionCheckbox").prop('checked', false);
 		}
 	});
 

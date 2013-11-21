@@ -77,12 +77,32 @@
 											</label>
 											
 											<hr>	
+											<p class="help-block"><strong>Parliament groups</strong></p>
 											<label class="checkbox inline"> <input
-												type="checkbox" id="allGroupCheckbox" value="All" /> All
+												type="checkbox" id="allParliamentGroupCheckbox" value="AllParliament" /> All
 											</label>
-											<c:forEach var="group" items="${groups}">
+											<c:forEach var="group" items="${parliamentGroups}">
+												<c:if test="${group != 'Adjaran supreme council' }">
+													<label class="checkbox inline"> <form:checkbox
+															path="chosenParliamentaryGroups" class="groupParliamentCheckbox" value="${group}" />
+														${group}
+													</label>
+												</c:if>
+											</c:forEach>
+											<hr>
+											<p class="help-block"><strong>Adjaran supreme council (Parliament group)</strong></p>
+											<label class="checkbox inline"> <form:checkbox
+													path="chosenParliamentaryGroups" class="groupParliamentCheckbox" value="Adjaran supreme council" />
+												Adjaran supreme council
+											</label>
+											<hr>
+											<p class="help-block"><strong>Election groups</strong></p>
+											<label class="checkbox inline"> <input
+												type="checkbox" id="allElectionGroupCheckbox" value="AllElection" /> All
+											</label>
+											<c:forEach var="group" items="${electionGroups}">
 												<label class="checkbox inline"> <form:checkbox
-														path="chosenGroups" class="groupCheckbox" value="${group}" />
+														path="chosenElectionGroups" class="groupElectionCheckbox" value="${group}" />
 													${group}
 												</label>
 											</c:forEach>
