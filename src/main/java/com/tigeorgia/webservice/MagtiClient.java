@@ -103,9 +103,12 @@ public class MagtiClient {
 	}
 
 	private boolean isInChosenGroup(Person recipient, ArrayList<String> chosenGroups){
-		ArrayList<String> personGroups = recipient.getGroups();
+		ArrayList<String> personGroups = new ArrayList<String>();
+		for (String recipientGroup: recipient.getGroups()){
+			personGroups.add(recipientGroup.toUpperCase());
+		}
 		for (String group : chosenGroups){
-			if (personGroups.contains(group)){
+			if (personGroups.contains(group.toUpperCase())){
 				return true;
 			}
 		}
