@@ -76,7 +76,17 @@ public class Utilities {
 							}
 							person.setNumbers(numbers);
 							
-							String[] splitGroups = splitLine[3].split("\\|");
+							// Groups
+							String groupLine = "";;
+							if (splitLine.length == 4){
+								groupLine = splitLine[3];
+							}else{
+								for (int i=3;i<splitLine.length;i++){
+									groupLine += splitLine[i]+",";
+								}
+								groupLine = groupLine.substring(0, groupLine.length()-1);
+							}
+							String[] splitGroups = groupLine.split("\\|");
 							
 							ArrayList<String> groups = null;
 							if (splitGroups != null && splitGroups.length > 0){

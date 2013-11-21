@@ -67,7 +67,6 @@ public class MagtiClient {
 					if ((allGroups || isInChosenGroup(recipient, chosenGroups)) && isInChosenLanguage(recipient, chosenLanguage)){
 						// Recipient is in chosen group, and in chosen language: we send the message.
 						ArrayList<String> recipientNumbers = recipient.getNumbers();
-						// TODO: take care of the 2nd number, if any.
 						wsVariables.put("to", "995"+recipientNumbers.get(0));
 						wsVariables.put("text", message.getBody());
 

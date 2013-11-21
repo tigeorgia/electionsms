@@ -33,6 +33,12 @@
 							</h2>
 						</div>
 						<div class="box-content">
+							<c:if test="${hasNoMessage == true}">
+								<div class="alert alert-info">
+									<button type="button" class="close" data-dismiss="alert">×</button>
+									No messages have been tracked in the log file (yet).
+								</div>
+							</c:if>
 							<c:choose>
 								<c:when test="${errorMsg != null}">
 									${errorMsg}

@@ -70,6 +70,7 @@ public class LogController {
 		}
 		
 		model.addAttribute("messageLog",messageLog);
+		model.addAttribute("hasNoMessage", (messageLog.size() == 0));
 		
 		return Constants.LOGGING_VIEW;
  

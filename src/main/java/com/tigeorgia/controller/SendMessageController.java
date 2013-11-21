@@ -85,8 +85,10 @@ public class SendMessageController {
 
 			if (messageBody != null && !messageBody.isEmpty()){
 
+				// Messages to be sent, taking place here
 				Summary summary = magtiClient.sendMessages(messageToBeSent, contactType);
 
+				// Logging taking place here
 				if (summary != null){						
 					// We log the summary here
 					logger.info(Constants.MESSAGE_TAG + "------------------------------");
