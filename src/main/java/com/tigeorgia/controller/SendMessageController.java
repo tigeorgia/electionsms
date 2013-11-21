@@ -90,9 +90,9 @@ public class SendMessageController {
 				if (summary != null){						
 					// We log the summary here
 					logger.info(Constants.MESSAGE_TAG + "------------------------------");
-					// First line: text + recipient groups.
+					// First line: text + recipient groups + chosen laguage
 					String message = Constants.MESSAGE_TAG + " Message sent: " + messageBody 
-							+ " - recipients: ";
+							+ " - language: " + messageToBeSent.getLang() + " - recipients: ";
 					if (messageGroups.size() == summary.getTotalNumberOfGroups()){
 						message += "All";
 					}else{
