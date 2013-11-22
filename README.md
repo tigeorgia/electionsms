@@ -3,7 +3,10 @@ Election SMS
 
 Web application sending bulk SMS to a group of election observers, via Magti web services.
 
-### Fill up application.propertie with Magti WS details
+Prerequisites
+-------------
+
+### Fill up application.properties with Magti WS details
 Before packaging and deploying the app, you must specify Magti's webservice details:
 
 1. Open /src/main/resources/application.properties
@@ -29,9 +32,24 @@ This will create a WAR file in ./target folder. We can now copy this file onto T
 3. Copy the newly created WAR file in Tomcat, in the 'webapps' folder.
 4. Restart Tomcat. After it finishes to restart, you'll be able to reach the home page at [http://localhost:8080/electionsms](http://localhost:8080/electionsms)
 
+How to configure your recipient lists and send messages
+-------------------------------------------------------
+
+With ELection SMS, you can send messages to 2 types of groups: Parliament-related groups of people, and Election-related groups of people. Before being able to send messages, you need to define these lists.
+
 ### Get a list of observers
-1. Before sending messages, you will need the list of observers, that are supposed to receive SMS.
+1. Go to the "Show Recipients" page. (link available on the left hand side, once you logged in)
+2. From this screen, you can upload a list of contact, one group type at a time.
 The list should be a CSV file, having the following format:
-`name,phone number,group`.
-2. Once you have a CSV file, make sure that its name is "PhoneNumberList.csv", and upload/copy it to the /tmp folder of the machine you just deployed the app on.
-3. You will now see the observers in [http://localhost:8080/electionsms/showlist](http://localhost:8080/electionsms/showlist).
+`name,language,phone number,group`.
+Select the file, choose the group type (Parliament or Election), and upload the list.
+3. Once the upload is finished, you will see the contacts being rendered in a table on that same page, below the upload section.
+
+### Send a message.
+1. Go to the "Send message" page.
+2. Write the message you want to send (160 characters max.)
+3. Select the language you're using in your message. This will filter the recipients that are tied to that language.
+4. Choose the groups of people you want to the send the message to. This will reduce even more the number of recipients. 
+5. Send message.
+6. After you receive the confirmation message (top of the page), go to the "Logging page", in order to see the status of your sending. 
+If you've received an error message, you will see, on the logging page, the name and phone number of the people who didn't receive the message.
