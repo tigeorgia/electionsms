@@ -57,10 +57,17 @@ public class SendMessageController {
 	public String sendMessage(@ModelAttribute("messageModel") Message messageToBeSent, ModelMap model){
 
 		if (messageToBeSent != null){
-			String messageBody = messageToBeSent.getBody();
-
-			sendMessageByChosenGroupType(messageToBeSent, model, Utilities.ELECTION_CONTACT_TYPE);
-			sendMessageByChosenGroupType(messageToBeSent, model, Utilities.PARLIAMENT_CONTACT_TYPE);
+			
+			ArrayList<String> parliamentGroups = messageToBeSent.getChosenParliamentaryGroups();
+			ArrayList<String> electionGroups = messageToBeSent.getChosenElectionGroups();
+			
+			if ((electionGroups == null || (electionGroups != null && electionGroups.size() == 0)) 
+					&& (parliamentGroups == null || (parliamentGroups != null && parliamentGroups.size() == 0))) {
+				model.addAttribute("errorMessage", "Please select at least a group.");
+			}else{
+				sendMessageByChosenGroupType(messageToBeSent, model, Utilities.ELECTION_CONTACT_TYPE);
+				sendMessageByChosenGroupType(messageToBeSent, model, Utilities.PARLIAMENT_CONTACT_TYPE);
+			}
 		}
 
 		model.addAttribute("electionGroups", initGroups(Utilities.ELECTION_CONTACT_TYPE));
@@ -92,7 +99,7 @@ public class SendMessageController {
 				if (summary != null){						
 					// We log the summary here
 					logger.info(Constants.MESSAGE_TAG + "------------------------------");
-					// First line: text + recipient groups + chosen laguage
+					// First line: text + recipient groups + chosen language
 					String message = Constants.MESSAGE_TAG + " Message sent: " + messageBody 
 							+ " - language: " + messageToBeSent.getLang() + " - recipients: ";
 					if (messageGroups.size() == summary.getTotalNumberOfGroups()){
@@ -137,8 +144,6 @@ public class SendMessageController {
 			}else{
 				model.addAttribute("errorMessage", "Please write a message to send.");
 			}
-		}else{
-			model.addAttribute("errorMessage", "Please select at least a group.");
 		}
 	}
 

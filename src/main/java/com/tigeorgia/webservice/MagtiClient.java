@@ -67,7 +67,12 @@ public class MagtiClient {
 					if ((allGroups || isInChosenGroup(recipient, chosenGroups)) && isInChosenLanguage(recipient, chosenLanguage)){
 						// Recipient is in chosen group, and in chosen language: we send the message.
 						ArrayList<String> recipientNumbers = recipient.getNumbers();
-						wsVariables.put("to", "995"+recipientNumbers.get(0));
+						String recipientNumber = recipientNumbers.get(0);
+						if (!(recipientNumber.startsWith("995") || recipientNumber.startsWith("+995"))){
+							recipientNumber = "995"+recipientNumber;
+						}
+						
+						wsVariables.put("to", recipientNumber);
 						wsVariables.put("text", message.getBody());
 
 						magtiResponse = restTemplate.getForObject(magtiWebserviceEndpoint, String.class, wsVariables);
