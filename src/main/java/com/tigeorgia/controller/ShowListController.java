@@ -1,21 +1,27 @@
 package com.tigeorgia.controller;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.tigeorgia.model.CsvFile;
 import com.tigeorgia.model.Person;
@@ -28,7 +34,7 @@ import com.tigeorgia.validator.UploadedFileValidator;
 public class ShowListController {
 
 	private static final Logger logger = Logger.getLogger(ShowListController.class);
-	
+
 	@Autowired  
 	UploadedFileValidator fileValidator;  
 
@@ -38,19 +44,25 @@ public class ShowListController {
 	 * @return view
 	 */
 	@RequestMapping(value="/showlist", method = RequestMethod.GET)
-	public String showlist(ModelMap model) {
-
-		model.addAttribute("electionRecipients", getRecipientListFromOneFile(Utilities.ELECTION_CONTACT_TYPE, model));
-		model.addAttribute("parliamentRecipients", getRecipientListFromOneFile(Utilities.PARLIAMENT_CONTACT_TYPE, model));
+	public ModelAndView showlist(String message) {
 		
+		ModelAndView mav = new ModelAndView(Constants.RECIPIENT_LIST_VIEW);
+
+		mav.addObject("electionRecipients", getRecipientListFromOneFile(Utilities.ELECTION_CONTACT_TYPE, mav.getModelMap()));
+		mav.addObject("parliamentRecipients", getRecipientListFromOneFile(Utilities.PARLIAMENT_CONTACT_TYPE, mav.getModelMap()));
+
 		UploadedFile uploadFile = new UploadedFile();
 		uploadFile.setContactType(Utilities.PARLIAMENT_CONTACT_TYPE);
-		model.addAttribute("uploadedFile", uploadFile);
+		mav.addObject("uploadedFile", uploadFile);
+		
+		if (message != null){
+			mav.addObject("downloadError", message);
+		}
 
-		return Constants.RECIPIENT_LIST_VIEW;
+		return mav;
 
 	}
-	
+
 	private List<Person> getRecipientListFromOneFile(String contactType, ModelMap model){
 		CsvFile file = Utilities.getListOfRecipients(logger, contactType);
 		List<Person> recipients = null;
@@ -83,12 +95,12 @@ public class ShowListController {
 			model.addAttribute("isUploadedSuccessfully", false);
 		}else{
 			try {  
-				
+
 				String contactType = uploadedFile.getContactType();
 				String filePath = null;
-				
+
 				inputStream = file.getInputStream();
-				
+
 				if (contactType.equalsIgnoreCase(Utilities.ELECTION_CONTACT_TYPE)){
 					filePath = "/tmp/ElectionPhoneNumberList.csv";
 				}else if (contactType.equalsIgnoreCase(Utilities.PARLIAMENT_CONTACT_TYPE)){
@@ -137,13 +149,34 @@ public class ShowListController {
 		// Loading the current CSV file (whether or not the upload succeeded)
 		model.addAttribute("electionRecipients", getRecipientListFromOneFile(Utilities.ELECTION_CONTACT_TYPE, model));
 		model.addAttribute("parliamentRecipients", getRecipientListFromOneFile(Utilities.PARLIAMENT_CONTACT_TYPE, model));
-		
+
 		// Reinitializing upload object
 		UploadedFile uploadFile = new UploadedFile();
 		uploadFile.setContactType(Utilities.PARLIAMENT_CONTACT_TYPE);
 		model.addAttribute("uploadedFile", uploadFile);
 
 		return Constants.RECIPIENT_LIST_VIEW;
+
+	}
+
+	@RequestMapping(value = "/download/{file_name}", method = RequestMethod.GET)
+	private ModelAndView getElectionFile(@PathVariable("file_name") String fileName, HttpServletResponse response){
+
+		try {
+			InputStream is = new FileInputStream("//tmp//" + fileName + ".csv");  
+			// copy it to response's OutputStream
+			
+			response.setContentType("application/csv");
+		    response.setHeader("Content-Disposition", "attachment; filename="+fileName+".csv");
+			
+			IOUtils.copy(is, response.getOutputStream());
+			response.flushBuffer();
+		} catch (IOException ex) {
+			logger.info("Error writing file to output stream. Filename was '" + fileName + "'");
+			return showlist("Problem occured when trying to download CSV file.");
+		}
+		
+		return null;
 
 	}
 

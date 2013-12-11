@@ -77,6 +77,34 @@
 					<div class="box span12">
 						<div class="box-header well" data-original-title>
 							<h2>
+								<i class="icon-user"></i> Download contact files
+							</h2>
+						</div>
+						<div class="box-content">
+							<c:if test="${downloadError != null}">
+								<div class="alert alert-error">
+									<button type="button" class="close" data-dismiss="alert">×</button>
+										${downloadError}
+								</div>
+							</c:if>
+							<c:if test="${fn:length(parliamentRecipients) > 0}">
+								<div class="control-group">
+									<a href="${pageContext.request.contextPath}/download/ParliamentPhoneNumberList.csv">Download Parliamentary contact list (CSV file)</a>
+								</div>
+							</c:if>
+							<c:if test="${fn:length(electionRecipients) > 0}">
+								<div class="control-group">
+									<a href="${pageContext.request.contextPath}/download/ElectionPhoneNumberList.csv">Download Election contact list (CSV file)</a>
+								</div>
+							</c:if>
+						</div>
+					</div>
+				</div>
+				
+				<div class="row-fluid sortable">
+					<div class="box span12">
+						<div class="box-header well" data-original-title>
+							<h2>
 								<i class="icon-user"></i> Parliamentary contacts
 							</h2>
 							<div class="box-icon">
