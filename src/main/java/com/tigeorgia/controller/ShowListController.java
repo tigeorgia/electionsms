@@ -92,7 +92,7 @@ public class ShowListController {
 		String fileName = file.getOriginalFilename();  
 
 		if (result.hasErrors()){
-			model.addAttribute("isUploadedSuccessfully", false);
+			model.addAttribute("uploadErrorMessage", result.getFieldError().getDefaultMessage());
 		}else{
 			try {  
 

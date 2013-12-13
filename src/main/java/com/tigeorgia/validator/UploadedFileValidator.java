@@ -1,7 +1,5 @@
 package com.tigeorgia.validator;
 
-import java.io.InputStream;
-
 import org.apache.log4j.Logger;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;

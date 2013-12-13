@@ -38,7 +38,9 @@
 						</div>
 						<div class="box-content">
 							<div class="control-group">
-								Upload a new CSV file, and select the type of contact (Parliament or Election), if you want to work with a new list of contacts.
+								Upload a new CSV file, and select the type of contact (Parliament or Election), if you want to work with a new list of contacts.<br />
+								The CSV file must have one of the 2 following formats: 'Name,Numbers,Groups' or 'Name,Language,Numbers,Groups'.<br />
+								(If several 'Numbers' or 'Groups', values have to be separated by '|', in each column)
 							</div>
 							<c:if test="${isUploadedSuccessfully == true }">
 								<div class="alert alert-success">
@@ -50,10 +52,10 @@
 								<form:form modelAttribute="uploadedFile" enctype="multipart/form-data" 
 								id="uploadbanner" action="${pageContext.request.contextPath}/uploadlist"
 								method="POST" class="form-horizontal">
-									<c:if test="${isUploadedSuccessfully == false }">
+									<c:if test="${uploadErrorMessage != null }">
 										<div class="alert alert-error">
 											<button type="button" class="close" data-dismiss="alert">×</button>
-											<strong>ERROR!</strong> <form:errors path="file" />
+											<strong>ERROR!</strong> ${uploadErrorMessage}
 										</div>
 									</c:if>
 									<form:input id="fileupload" type="file" path="file" name="file" /> 

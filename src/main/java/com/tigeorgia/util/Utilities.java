@@ -22,6 +22,9 @@ public class Utilities {
 	public static final String PARLIAMENT_CONTACT_TYPE = "parliament";
 	public static final String ELECTION_CONTACT_TYPE = "election";
 	
+	public static final String GEORGIAN_LANGUAGE = "ka";
+	public static final String ENGLISH_LANGUAGE = "en";
+	
 	public static CsvFile checkUploadedListOfRecipients(MultipartFile file, Logger logger){
 		return processListOfRecipients(logger, null, file);
 	}
@@ -58,12 +61,34 @@ public class Utilities {
 					String line = br.readLine();
 					if (line != null && !line.isEmpty()){
 						String[] splitLine = line.split(",");
-						if (splitLine.length >= 4){
+						if (splitLine.length >= 3){
+							// The CSV file might have either 3 or 4 columns:
+							// - 3 columns: Name, Number, Groups
+							// - 4 columns: Name, Language, Number, Groups
+							// If it is a 3-column document, default language will be 'Georgian', if it is not, we'll have either 'en' or 'ka'
+							// on the second column.
+							
+							boolean is4ColumnDocument = (splitLine[1].equalsIgnoreCase(ENGLISH_LANGUAGE) || splitLine[1].equalsIgnoreCase(GEORGIAN_LANGUAGE));
+							
+							String language = null;
+							String phoneNumber = null;
+							int firstGroupIndex = 0;
+							if (is4ColumnDocument){
+								language = splitLine[1];
+								phoneNumber = splitLine[2];
+								firstGroupIndex = 3;
+							}else{
+								language = "ka";
+								phoneNumber = splitLine[1];
+								firstGroupIndex = 2;
+							}
+							
+							
 							Person person = new Person();
 							person.setName(splitLine[0]);
-							person.setLanguage(splitLine[1]);
+							person.setLanguage(language);
 
-							String formattedNumbers = splitLine[2].trim().replaceAll("-", "")
+							String formattedNumbers = phoneNumber.trim().replaceAll("-", "")
 									.replaceAll(" ","")
 									.replaceAll("/", "\\|");
 							
@@ -77,15 +102,15 @@ public class Utilities {
 							person.setNumbers(numbers);
 							
 							// Groups
-							String groupLine = "";;
-							if (splitLine.length == 4){
-								groupLine = splitLine[3];
-							}else{
-								for (int i=3;i<splitLine.length;i++){
+							String groupLine = "";
+							/*if (splitLine.length == 4){
+								groupLine = splitLine[firstGroupIndex];
+							}else{ */
+								for (int i=firstGroupIndex;i<splitLine.length;i++){
 									groupLine += splitLine[i]+",";
 								}
 								groupLine = groupLine.substring(0, groupLine.length()-1);
-							}
+							//}
 							String[] splitGroups = groupLine.split("\\|");
 							
 							ArrayList<String> groups = null;
@@ -102,7 +127,7 @@ public class Utilities {
 							recipients.add(person);
 						}else{
 							// the CSV file is not well formatted, we need to raise an error
-							errorMessage = "The line #" + lineNumber + " is not well formatted (less than 4 fields). ";
+							errorMessage = "The line #" + lineNumber + " is not well formatted (less than 3 fields). ";
 							if (file != null){
 								errorMessage += "Please review your CSV file, and try to upload it again.";
 								logger.error(errorMessage);
