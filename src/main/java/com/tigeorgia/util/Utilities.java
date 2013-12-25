@@ -74,7 +74,11 @@ public class Utilities {
 							String phoneNumber = null;
 							int firstGroupIndex = 0;
 							if (is4ColumnDocument){
-								language = splitLine[1];
+								if (splitLine[1] == null || (splitLine[1] != null && splitLine[1].isEmpty())){
+									language = "ka";
+								}else{
+									language = splitLine[1];
+								}
 								phoneNumber = splitLine[2];
 								firstGroupIndex = 3;
 							}else{
@@ -103,14 +107,10 @@ public class Utilities {
 							
 							// Groups
 							String groupLine = "";
-							/*if (splitLine.length == 4){
-								groupLine = splitLine[firstGroupIndex];
-							}else{ */
-								for (int i=firstGroupIndex;i<splitLine.length;i++){
-									groupLine += splitLine[i]+",";
-								}
-								groupLine = groupLine.substring(0, groupLine.length()-1);
-							//}
+							for (int i=firstGroupIndex;i<splitLine.length;i++){
+								groupLine += splitLine[i]+",";
+							}
+							groupLine = groupLine.substring(0, groupLine.length()-1);
 							String[] splitGroups = groupLine.split("\\|");
 							
 							ArrayList<String> groups = null;
