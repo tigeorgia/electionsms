@@ -131,7 +131,9 @@ public class ShowListController {
 				e.printStackTrace();  
 			} finally {
 				try {
-					outputStream.close();
+					if (outputStream != null){
+						outputStream.close();
+					}
 				} catch (IOException e) {
 					logger.error("Problem closing OutputStream.");
 				}
