@@ -7,6 +7,7 @@ public class Constants {
 	public static final String SEND_MESSAGE_VIEW = "messageform";
 	public static final String LOGGING_VIEW = "logfile";
 	public static final String RECIPIENT_LIST_VIEW = "recipientlist";
+	public static final String DRAFTLAW_IMPORT_VIEW = "draftlawimport";
 	
 	public static final String MESSAGE_TAG = "SENTMESSAGE";
 

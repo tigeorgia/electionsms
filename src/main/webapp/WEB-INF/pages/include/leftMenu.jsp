@@ -14,6 +14,9 @@
 			<li><a class="ajax-link" href="${pageContext.request.contextPath}/logging"><i
 					class="icon-align-justify"></i><span class="hidden-tablet">
 						Logging</span></a></li>
+			<li><a class="ajax-link" href="${pageContext.request.contextPath}/draftlaw-import"><i
+					class="icon-upload"></i><span class="hidden-tablet">
+						Draft law import</span></a></li>						
 		</ul>
 	</div>
 	<!--/.well -->

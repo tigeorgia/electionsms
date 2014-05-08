@@ -44,10 +44,8 @@
 	<link href="<spring:url value='/resources/css/opa-icons.css'/>" rel='stylesheet' type="text/css"/> -->
 	<link href="<spring:url value='/resources/css/uploadify.css'/>" rel='stylesheet' type="text/css"/>
 
+	
 	<!-- The HTML5 shim, for IE6-8 support of HTML5 elements -->
 	<!--[if lt IE 9]>
 	  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 	<![endif]-->
-
-	<!-- The fav icon -->
-	<link rel="shortcut icon" href="img/favicon.ico">
