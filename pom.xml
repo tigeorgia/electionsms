@@ -109,6 +109,12 @@
 			<version>1.2.2</version>
 		</dependency>
 
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>1.9.1</version>
+		</dependency>
+
 		<!-- Webservices -->
 		<dependency>
 			<groupId>org.springframework.ws</groupId>
@@ -156,16 +162,10 @@
 			<artifactId>hibernate-entitymanager</artifactId>
 			<version>${hibernate.version}</version>
 		</dependency>
-		<!-- <dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>${mysql.connector.version}</version>
-		</dependency>-->
-		<!-- <dependency>
-			<groupId>postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>${postgres.connector.version}</version>
-		</dependency> -->
+		<!-- <dependency> <groupId>mysql</groupId> <artifactId>mysql-connector-java</artifactId> 
+			<version>${mysql.connector.version}</version> </dependency> -->
+		<!-- <dependency> <groupId>postgresql</groupId> <artifactId>postgresql</artifactId> 
+			<version>${postgres.connector.version}</version> </dependency> -->
 		<dependency>
 			<groupId>postgresql</groupId>
 			<artifactId>postgresql</artifactId>

@@ -1,5 +1,10 @@
 package com.tigeorgia.config;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,12 +15,15 @@ import javax.annotation.Resource;
 import javax.sql.DataSource;
 import javax.xml.transform.Source;
 
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.xml.SourceHttpMessageConverter;
@@ -158,6 +166,38 @@ public class AppConfig extends WebMvcConfigurerAdapter{
 	@Bean
 	public CommonsMultipartResolver multipartResolver(){
 		return new CommonsMultipartResolver();
+	}
+	
+	@Bean(name="draftlawHeadings")
+	@Scope(value = BeanDefinition.SCOPE_SINGLETON)
+	public Map<String,String> draftlawHeadings(){
+		//InputStream inputStream;
+		BufferedReader br = null;
+		Map<String, String> results = new HashMap<String, String>();
+		try {
+			ClassPathResource resource = new ClassPathResource("draftlawHeadings.csv");
+			InputStream inputStream = resource.getInputStream();
+			//inputStream = new FileInputStream();
+			if (inputStream != null){
+				br = new BufferedReader(new InputStreamReader(inputStream));
+				while (br.ready()) {
+					String line = br.readLine();
+					if (line != null && !line.isEmpty()){
+						String[] splitLine = line.split(",");
+						results.put(splitLine[0], splitLine[1]);
+					}
+				}
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return results;
+		
 	}
 
 }

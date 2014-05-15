@@ -19,8 +19,7 @@ public class DraftlawServiceImpl implements DraftlawService {
 
 	@Override
 	public void addDraftlaw(Draftlaw draftLaw) {
-		// TODO Auto-generated method stub
-		
+		draftLawDAO.addDraftlaw(draftLaw);
 	}
 
 	@Override
@@ -30,7 +29,7 @@ public class DraftlawServiceImpl implements DraftlawService {
 
 	@Override
 	public void updateDraftlaw(Draftlaw draftLaw) {
-		// TODO Auto-generated method stub
+		draftLawDAO.updateDraftlaw(draftLaw);
 		
 	}
 
@@ -41,9 +40,14 @@ public class DraftlawServiceImpl implements DraftlawService {
 	}
 
 	@Override
-	public List<Draftlaw> getStores(List<Integer> idList) {
+	public List<Draftlaw> getDraftlaws(List<Integer> idList) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public Draftlaw getDraftlaw(String registrationNumber) {
+		return draftLawDAO.getDraftlaw(registrationNumber);
 	}
 
 }

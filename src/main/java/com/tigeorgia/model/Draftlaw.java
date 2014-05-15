@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity  
 @Table(name="draftlaw_draftlaw")
@@ -17,10 +18,20 @@ public class Draftlaw {
 	private Integer id;
 	
 	@Column(name = "bureau_date")
-	private Date bureauDate;
+	private String bureauDate;
 	
 	@Column(name = "bill_number")
 	private String billNumber;
+	
+	private transient String registrationDate;
+	
+	private transient String draftlawType;
+	
+	private transient String draftlawTypeEn;
+	
+	private transient String primaryParentDraftLaw;
+	
+	private transient String primaryParentDraftLawEn;
 	
 	private String title;
 	
@@ -101,6 +112,10 @@ public class Draftlaw {
 	@Column(name = "summary_ka")
 	private String summaryKa;
 	
+	private transient String leadingCommitteeEn;
+	
+	private transient String leadingCommitteeKa;
+	
 	@Column(name = "full_text_en")
 	private String fullTextEn;
 	
@@ -117,11 +132,11 @@ public class Draftlaw {
 		this.id = id;
 	}
 
-	public Date getBureauDate() {
+	public String getBureauDate() {
 		return bureauDate;
 	}
 
-	public void setBureauDate(Date bureauDate) {
+	public void setBureauDate(String bureauDate) {
 		this.bureauDate = bureauDate;
 	}
 
@@ -379,8 +394,69 @@ public class Draftlaw {
 
 	public void setVotingRecordId(Integer votingRecordId) {
 		this.votingRecordId = votingRecordId;
-	} 
-	
+	}
+
+	@Transient
+	public String getDraftlawType() {
+		return draftlawType;
+	}
+
+	public void setDraftlawType(String draftlawType) {
+		this.draftlawType = draftlawType;
+	}
+
+	@Transient
+	public String getDraftlawTypeEn() {
+		return draftlawTypeEn;
+	}
+
+	public void setDraftlawTypeEn(String draftlawTypeEn) {
+		this.draftlawTypeEn = draftlawTypeEn;
+	}
+
+	@Transient
+	public String getPrimaryParentDraftLaw() {
+		return primaryParentDraftLaw;
+	}
+
+	public void setPrimaryParentDraftLaw(String primaryParentDraftLaw) {
+		this.primaryParentDraftLaw = primaryParentDraftLaw;
+	}
+
+	@Transient
+	public String getPrimaryParentDraftLawEn() {
+		return primaryParentDraftLawEn;
+	}
+
+	public void setPrimaryParentDraftLawEn(String primaryParentDraftLawEn) {
+		this.primaryParentDraftLawEn = primaryParentDraftLawEn;
+	}
+
+	@Transient
+	public String getLeadingCommitteeEn() {
+		return leadingCommitteeEn;
+	}
+
+	public void setLeadingCommitteeEn(String leadingCommitteeEn) {
+		this.leadingCommitteeEn = leadingCommitteeEn;
+	}
+
+	@Transient
+	public String getLeadingCommitteeKa() {
+		return leadingCommitteeKa;
+	}
+
+	public void setLeadingCommitteeKa(String leadingCommitteeKa) {
+		this.leadingCommitteeKa = leadingCommitteeKa;
+	}
+
+	public String getRegistrationDate() {
+		return registrationDate;
+	}
+
+	public void setRegistrationDate(String registrationDate) {
+		this.registrationDate = registrationDate;
+	}
 	
 
 }

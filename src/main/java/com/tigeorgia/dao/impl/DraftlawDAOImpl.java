@@ -1,7 +1,9 @@
 package com.tigeorgia.dao.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +25,7 @@ public class DraftlawDAOImpl implements DraftlawDAO {
 
 	@Override
 	public void addDraftlaw(Draftlaw draftLaw) {
-		// TODO Auto-generated method stub
-
+		getCurrentSession().save(draftLaw);
 	}
 
 	@Override
@@ -32,10 +33,27 @@ public class DraftlawDAOImpl implements DraftlawDAO {
 		Draftlaw draftLaw = (Draftlaw) getCurrentSession().get(Draftlaw.class, id);
 		return draftLaw;
 	}
+	
+	@Override
+	public Draftlaw getDraftlaw(String registrationNumber) {  
+        List<Draftlaw> numberList = new ArrayList<Draftlaw>();  
+        Query query = getCurrentSession().createQuery("from Draftlaw d where d.billNumber = :registrationNumber"); 
+        if (query != null){
+        	query.setParameter("registrationNumber", registrationNumber);  
+	        numberList = query.list();  
+	        if (numberList.size() > 0){  
+	            return numberList.get(0);  
+	        }else{  
+	            return null;
+	        }
+	    }else{        	
+        		return null;
+        }
+    }  
 
 	@Override
 	public void updateDraftlaw(Draftlaw draftLaw) {
-		// TODO Auto-generated method stub
+		getCurrentSession().update(draftLaw);
 
 	}
 
@@ -46,7 +64,7 @@ public class DraftlawDAOImpl implements DraftlawDAO {
 	}
 
 	@Override
-	public List<Draftlaw> getStores(List<Integer> idList) {
+	public List<Draftlaw> getDraftlaws(List<Integer> idList) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -1,0 +1,26 @@
+bureauDate,Date registered at Parliament Bureau
+billNumber,Draft law registration number
+registrationDate,Draft registration date
+draftlawType,Type of a draft law
+draftlawTypeEn,Type of a draft law
+fullTextUrl,Draft law URL
+primaryParentDraftLaw,Primary/parent draft law (Georgian)
+primaryParentDraftLawEn,Primary/parent draft law (English)
+titleKa,Draft law title (Georgian)
+titleEn,Draft law title (English)
+initiatorKa,Initiator of draft law (Georgian)
+initiatorEn,Initiator of draft law (English)
+authorKa,Author of draft law (Georgian)
+authorEn,Author of draft law (English)
+leadingCommitteeKa,Leading committee (Georgian)
+leadingCommitteeEn,Leading committee (English)
+summaryKa,Description of draft law (Georgian)
+summaryEn,Description of draft law (English)
+firstCommitteeHearing,I committee hearing
+firstPlenaryHearing,I plenary hearing
+secondCommitteeHearing,II committee hearing
+secondPlenaryHearing,II plenary hearing
+thirdCommitteeHearing,III committee hearing
+thirdPlenaryHearing,III plenary hearing
+lawNumber,Law number
+numberDaysDiscussion,Number of days in discussion

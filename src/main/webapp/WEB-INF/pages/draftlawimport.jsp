@@ -2,6 +2,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -50,9 +51,40 @@
 								
 									<div class="control-group">
 										<div class="controls">
-											<a href="#" class="btn btn-info">Validate & upload draft laws to database</a>
+											<a href="${pageContext.request.contextPath}/draftlaw-import/upload" class="btn btn-info">Validate & upload draft laws to database</a>
 										</div>
 									</div>
+									
+									<c:if test="${errorMessages != null}">
+										<div class="control-group">
+											<div class="controls">
+												<span style="color: red; font-weight:bold;">The MyParliament database has not been updated: there are ${fn:length(errorMessages)} validation error(s) in the spreadsheet</span><br /> 
+												<span style="color: red">Please correct them then try to upload again:</span>
+												<ol>
+													<c:forEach items="${errorMessages}" var="errorMessage" varStatus="status">
+														<c:choose>
+															<c:when test="${status.count % 2 == 0}">
+																<li style="background-color: #F0F8FF;">${errorMessage.message}</li>
+															</c:when>
+															<c:otherwise>
+																<li>${errorMessage.message}</li>
+															</c:otherwise>
+														</c:choose>
+														<c:if test="">				 
+														</c:if>
+													</c:forEach>
+												</ol>
+											</div>
+										</div>
+									</c:if>
+									<c:if test="${isUpdateSuccess}">
+										<div class="control-group">
+											<div class="controls">
+												<span style="color: green; font-weight:bold;">The MyParliament database has has been updated successfully</span><br />
+												<span style="color: green">Go check it out on <a href ="http://chemiparlamenti.ge/en/what/" target="_blank">the MyParliament draft law page</a></span>
+											</div>
+										</div>
+									</c:if>
 								</fieldset>
 
 						</div>
