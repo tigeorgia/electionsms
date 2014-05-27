@@ -67,24 +67,30 @@ public class MagtiClient {
 					if ((allGroups || isInChosenGroup(recipient, chosenGroups)) && isInChosenLanguage(recipient, chosenLanguage)){
 						// Recipient is in chosen group, and in chosen language: we send the message.
 						ArrayList<String> recipientNumbers = recipient.getNumbers();
-						String recipientNumber = recipientNumbers.get(0);
-						if (!(recipientNumber.startsWith("995") || recipientNumber.startsWith("+995"))){
-							recipientNumber = "995"+recipientNumber;
-						}
-						
-						wsVariables.put("to", recipientNumber);
-						wsVariables.put("text", message.getBody());
-
-						magtiResponse = restTemplate.getForObject(magtiWebserviceEndpoint, String.class, wsVariables);
-						countTotalMessageSent++;
-						
-						String[] responses = magtiResponse.split(" - ");
 						String statusCode = null;
-						if (responses != null && responses.length == 2){
-							statusCode = responses[0].trim();
+						if (recipientNumbers != null && recipientNumbers.size() >= 1){
+							String recipientNumber = recipientNumbers.get(0);
+							if (!(recipientNumber.startsWith("995") || recipientNumber.startsWith("+995"))){
+								recipientNumber = "995"+recipientNumber;
+							}
+							
+							wsVariables.put("to", recipientNumber);
+							wsVariables.put("text", message.getBody());
+
+							magtiResponse = restTemplate.getForObject(magtiWebserviceEndpoint, String.class, wsVariables);
+							
+							String[] responses = magtiResponse.split(" - ");
+							if (responses != null && responses.length == 2){
+								statusCode = responses[0].trim();
+							}else{
+								statusCode = magtiResponse;
+							}
 						}else{
-							statusCode = magtiResponse;
+							// There is been a formatting problem, in the CSV file - phone number was not entered properly.
+							statusCode = Constants.MAGTI_WSCODE_CSVFILE_ERROR;
 						}
+						
+						countTotalMessageSent++;
 						
 						if (statusCode.equalsIgnoreCase(Constants.MAGTI_WSCODE_SUCCESS)){
 							countSuccess++;
