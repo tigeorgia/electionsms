@@ -4,4 +4,4 @@ target
 .project
 src/main/resources/*PhoneNumberList*.csv
 src/main/resources/*PhoneNumbersList*.csv
-application.properties
+src/main/resources/application.properties
