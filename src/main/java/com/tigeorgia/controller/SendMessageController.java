@@ -127,8 +127,14 @@ public class SendMessageController {
 						int i=0;
 						for (Person person : summary.getDidntReceive()){
 							i++;
-							logger.info(Constants.MESSAGE_TAG + " ### " + i + ") " + person.getName() + " - " + person.getNumbers().get(0) + 
-									" - Error code: " + person.getErrorCode());
+							if (person.getNumbers() != null && person.getNumbers().size() >= 1){
+								logger.info(Constants.MESSAGE_TAG + " ### " + i + ") " + person.getName() + " - " + person.getNumbers().get(0) + 
+										" - Error code: " + person.getErrorCode());
+							}else{
+								logger.info(Constants.MESSAGE_TAG + " ### " + i + ") " + person.getName() + " - (phone number can't be read) - "
+										+ "Error code: " + person.getErrorCode());
+							}
+							
 						}
 						model.addAttribute("didntReceiveMessage", " Your message has been sent, but " + summary.getFailNumber() + " people did not receive the message (see logs)");
 					}else{
