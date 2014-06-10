@@ -41,6 +41,8 @@ import org.springframework.web.servlet.view.JstlView;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 import org.springframework.xml.xpath.Jaxp13XPathTemplate;
 
+import com.google.gdata.client.spreadsheet.SpreadsheetService;
+import com.google.gdata.data.spreadsheet.SpreadsheetEntry;
 import com.tigeorgia.validator.UploadedFileValidator;
 import com.tigeorgia.webservice.MagtiClient;
 
@@ -198,6 +200,18 @@ public class AppConfig extends WebMvcConfigurerAdapter{
 		
 		return results;
 		
+	}
+	
+	@Bean(name="spreadsheet")
+	@Scope(value = BeanDefinition.SCOPE_PROTOTYPE)
+	public SpreadsheetEntry spreadsheet(){
+		return new SpreadsheetEntry();
+	}
+	
+	@Bean(name="service")
+	@Scope(value = BeanDefinition.SCOPE_PROTOTYPE)
+	public SpreadsheetService service(){
+		return new SpreadsheetService("tig-draftlaw-spreadsheet");
 	}
 
 }

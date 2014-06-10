@@ -9,6 +9,7 @@ public interface DraftlawDAO {
 	public void addDraftlaw(Draftlaw draftLaw);
 	public Draftlaw getDraftlaw(int id);
 	public Draftlaw getDraftlaw(String registrationNumber);
+	public Draftlaw getDraftlawWithDiscussions(String registrationNumber);
 	public void updateDraftlaw(Draftlaw draftLaw);
 	public List<Draftlaw> getAllDraftlaw();
 	public List<Draftlaw> getDraftlaws(List<Integer> idList);

@@ -1,12 +1,6 @@
 package com.tigeorgia.util;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -15,10 +9,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.beanutils.BeanUtils;
 
@@ -30,19 +25,19 @@ import com.google.gdata.data.spreadsheet.SpreadsheetFeed;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
 import com.google.gdata.util.AuthenticationException;
 import com.google.gdata.util.ServiceException;
-import com.tigeorgia.controller.DraftLawController;
 import com.tigeorgia.model.Draftlaw;
 import com.tigeorgia.model.DraftlawContainer;
+import com.tigeorgia.model.DraftlawDiscussion;
 import com.tigeorgia.model.DraftlawValidationMessage;
 
 public class GoogleSpreadsheetParser {
 	
-	public static final String GOOGLE_ACCOUNT_USERNAME = "****";
-	public static final String GOOGLE_ACCOUNT_PASSWORD = "****";
+	public static final String GOOGLE_ACCOUNT_USERNAME = "*****";
+	public static final String GOOGLE_ACCOUNT_PASSWORD = "*****";
 
 	public static final String GOOGLE_SPREADSHEET_TITLE = "კანონპროექტების ბაზა | Draft law database";
 
-	public static final String SPREADSHEET_URL = "https://docs.google.com/spreadsheet/ccc?key=0AtLaNvIaw4_rdEZkRWlDX2RhTlF6NEx5SU10Vll2R3c&usp=sharing#gid=0";
+	public static final String SPREADSHEET_URL = "*****";
 	
 	public static final String REGULAR_EXPRESSION_FOR_BILL_NUMBER = "#\\d{2}-\\d/\\d{3}";
 
@@ -62,17 +57,46 @@ public class GoogleSpreadsheetParser {
 	// The following values are used to match Draftlaw class attributes, via reflection.
 	public static final LinkedList<String> listOfMandatoryFields = new LinkedList<String>(Arrays.asList("bureauDate", "billNumber", "fullTextUrl", "draftlawType", "draftlawTypeEn", "primaryParentDraftLaw", "primaryParentDraftLawEn", "titleEn", "titleKa",
 			"initiatorEn", "initiatorKa", "authorEn", "authorKa", "leadingCommitteeEn", "leadingCommitteeKa", "summaryKa"));
+	
+	public static final LinkedList<String> listOfDiscussionFields = new LinkedList<String>(Arrays.asList("firstCommitteeHearing","firstPlenaryHearing","secondCommitteeHearing","secondPlenaryHearing","thirdCommitteeHearing","thirdPlenaryHearing"));
 
 	public static final LinkedList<String> statusLabelEn = new LinkedList<String>(Arrays.asList("1st Committee","1st Plenary","2nd Committee","2nd Plenary","3rd Committee","3rd Plenary"));
 	public static final LinkedList<String> statusLabelKa = new LinkedList<String>(Arrays.asList("პირველი კომიტეტი","პირველი პლენარული","მეორე კომიტეტი","მეორე პლენარული","მესამე კომიტეტი","მესამე პლენარული"));
 	public static final LinkedList<String> hearingLabelsKa = new LinkedList<String>(Arrays.asList("firstCommitteeHearing","firstPlenaryHearing","secondCommitteeHearing","secondPlenaryHearing","thirdCommitteeHearing","thirdPlenaryHearing"));
 	public static final LinkedList<String> hearingLabelsEn = new LinkedList<String>(Arrays.asList("firstCommitteeHearingEn","firstPlenaryHearingEn","secondCommitteeHearingEn","secondPlenaryHearingEn","thirdCommitteeHearingEn","thirdPlenaryHearingEn"));
 	
-	public static DraftlawContainer validateSpreadsheet(Map<String, String> draftlawHeadings){
+	
+	public static SpreadsheetEntry getGoogleSpreadsheet(SpreadsheetService service){
 		
-		SpreadsheetService service = new SpreadsheetService("tig-draftlaw-spreadsheet");
-
-		SpreadsheetEntry spreadsheet = getGoogleSpreadsheet(service);
+		SpreadsheetEntry spreadsheet = getGoogleSpreadsheetInfo(service);
+		
+		return spreadsheet;
+		
+	}
+	
+	
+	public static List<String> getAllPageNames(SpreadsheetEntry spreadsheet){
+		
+		List<WorksheetEntry> worksheets;
+		List<String> titles = new ArrayList<String>();
+		try {
+			worksheets = spreadsheet.getWorksheets();
+			
+			// Store the spreadsheet in a list of Draftlaw instances.
+			for (WorksheetEntry worksheet : worksheets) {
+				titles.add(worksheet.getTitle().getPlainText());
+			}
+			
+		} catch (IOException | ServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return titles;
+					
+	}
+	
+	public static DraftlawContainer validateSpreadsheet(SpreadsheetEntry spreadsheet, String spreadsheetTitle, SpreadsheetService service, Map<String, String> draftlawHeadings){
 		
 		List<WorksheetEntry> worksheets;
 		
@@ -85,7 +109,9 @@ public class GoogleSpreadsheetParser {
 		ArrayList<DraftlawValidationMessage> draftlawErrorMessages = new ArrayList<DraftlawValidationMessage>(); 
 		
 		// Bureau date format, for validation
-		SimpleDateFormat bureauDateFormat = new SimpleDateFormat("MM.dd.yyyy");
+		SimpleDateFormat fieldDateFormat = new SimpleDateFormat("MM.dd.yyyy");
+		
+		Date todaydate = new Date();
 		
 		
 		try {
@@ -97,10 +123,12 @@ public class GoogleSpreadsheetParser {
 				String title = worksheet.getTitle().getPlainText();
 
 				System.out.println(title);
+				
+				// We taking out the georgian characters from the title, to test if we are on the right page.
+				String[] titleSplit = spreadsheetTitle.split(" ");
+				String shortSpreadsheetTitle = titleSplit[0] + " " + titleSplit[1];
 
-				// We are currently only taking care of the 3rd spreadsheet (FALL 2013)
-				String lastSpreadsheetTitle = "SPRING 2014";
-				if (title != null && title.contains(lastSpreadsheetTitle)){
+				if (title != null && title.contains(shortSpreadsheetTitle)){
 
 					// Print the fetched information to the screen for this worksheet.
 					URL listFeedUrl = worksheet.getListFeedUrl();
@@ -114,24 +142,71 @@ public class GoogleSpreadsheetParser {
 						// Print the first column's cell value
 						// Iterate over the remaining columns, and print each cell value
 						if (countrow > 0){
-							Map<String,String> rowData = new HashMap<String,String>();
-
 							int countForColumn = 0;
 							Draftlaw draftlaw = new Draftlaw();
+							
+							// The real row number matches the row number, in the spreadsheet.
+							int realRowNumber = countrow + 2;
 							
 							for (String tag : row.getCustomElements().getTags()) {
 								String fieldName = colNames.get(countForColumn);
 								String value = row.getCustomElements().getValue(tag);
 								
-								BeanUtils.setProperty(draftlaw,fieldName,value);
+								if (fieldName.equalsIgnoreCase("bureauDate")){
+									try {
+										if (value != null && !value.isEmpty()){
+											Date bureauDate = fieldDateFormat.parse(value);
+
+											String dateForTest = fieldDateFormat.format(bureauDate);
+											if (!dateForTest.equalsIgnoreCase(value)){
+												// This test is to make sure that the date was not entered with the 'DD.MM.YYYY' format (day and month inversed)
+												//throw new ParseException(bureauDate.toString(), 0);
+												DraftlawValidationMessage message = new DraftlawValidationMessage();
+												message.setMessage("The bureau date '"+value+"' does not match the mandatory format 'MM.DD.YYYY', for the draft law on row "
+															+ Integer.toString(realRowNumber) + " (page '" + spreadsheetTitle +"')");
+												draftlawErrorMessages.add(message);
+											}else if (bureauDate.after(todaydate)){
+												// The bureau date cannot be after today's date.
+												DraftlawValidationMessage message = new DraftlawValidationMessage();
+												message.setMessage("The bureau date '"+value+"' cannot be after today's date, for the draft law on row "
+															+ Integer.toString(realRowNumber) + " (page '" + spreadsheetTitle +"')");
+												draftlawErrorMessages.add(message);
+											}else{
+												draftlaw.setBureauDate(bureauDate);
+											}
+										}
+									} catch (ParseException e) {
+										
+									} 
+											
+								}else{
+									// Setting information in draftlaw instance, by reflection.
+									BeanUtils.setProperty(draftlaw,fieldName,value);
+								}
 								
 								countForColumn++;
 							}
 							
-							parsedDraftlaws.add(draftlaw);
-							
-							// The real row number matches the row number, in the spreadsheet.
-							int realRowNumber = countrow + 2;
+							if (draftlaw.getPrimaryParentDraftLawEn().equalsIgnoreCase("Primary")){
+								// We take care of the Primary draft laws only, for now. Not the part of the package.
+								draftlaw.setTitle(draftlaw.getTitleEn());
+								draftlaw.setAuthor(draftlaw.getAuthorEn());
+								draftlaw.setInitiator(draftlaw.getInitiatorEn());
+								draftlaw.setSummary(draftlaw.getSummaryKa());
+								draftlaw.setFullText(draftlaw.getSummaryKa());
+								draftlaw.setEnactedTextUrl("");
+								draftlaw.setRelatedOne("");
+								draftlaw.setRelatedTwo("");
+								draftlaw.setRelatedThree("");
+								draftlaw.setRelatedFour("");
+								draftlaw.setRelatedFive("");
+								draftlaw.setModerateAnnotations(new Date());
+								
+								String slug = draftlaw.getBillNumber().substring(1,draftlaw.getBillNumber().length());
+								draftlaw.setSlug(slug.replaceAll("/", ""));
+								
+								parsedDraftlaws.add(draftlaw);
+							}
 							
 							// For this Draft law, we check if all the mandatory fields have been filled.
 							// If a mandatory field ha not been filled, we log it in a list, so we can display 
@@ -141,44 +216,161 @@ public class GoogleSpreadsheetParser {
 									String fieldValue = BeanUtils.getProperty(draftlaw, mandatoryField);
 									if ((fieldValue == null) || (fieldValue != null && fieldValue.isEmpty())){
 										DraftlawValidationMessage message = new DraftlawValidationMessage();
-										// message.setDraftLaw(draftlaw);
 										message.setMessage("The mandatory field '" + draftlawHeadings.get(mandatoryField) + 
-												"' is missing, for the draft law on row " + Integer.toString(realRowNumber) + " (page '" + lastSpreadsheetTitle +"')");
+												"' is missing, for the draft law on row " + Integer.toString(realRowNumber) + " (page '" + spreadsheetTitle +"')");
 										draftlawErrorMessages.add(message);
 									}
 								} catch (NoSuchMethodException e) {
 									// There was a problem while reading a field. We log it.
 									DraftlawValidationMessage message = new DraftlawValidationMessage();
-									//message.setDraftLaw(draftlaw);
 									message.setMessage("There was a problem while reading the field '" + draftlawHeadings.get(mandatoryField) + 
-											"' for the draft law on row " + Integer.toString(realRowNumber) + " (page '" + lastSpreadsheetTitle +"')");
+											"' for the draft law on row " + Integer.toString(realRowNumber) + " (page '" + spreadsheetTitle +"')");
 									draftlawErrorMessages.add(message);
 								}
 							}
-							
-							// For this draft law the 'bureau date' field should have the following format: MM.DD.YYYY
-							String bureauDateStr = draftlaw.getBureauDate();
-							try {
-								if (bureauDateStr != null && !bureauDateStr.isEmpty()){
-									bureauDateFormat.parse(bureauDateStr);
-								}
-							} catch (ParseException e) {
-								DraftlawValidationMessage message = new DraftlawValidationMessage();
-								message.setMessage("The bureau date '"+bureauDateStr+"' does not match the mandatory format 'MM.DD.YYYY', for the draft law on row "
-											+ Integer.toString(realRowNumber) + " (page '" + lastSpreadsheetTitle +"')");
-								draftlawErrorMessages.add(message);
-							}
-							
+														
 							// Registration number should match following format: “#xx-x/xxx”, where x is a number.
 							String billNumber = draftlaw.getBillNumber();
 							if (!billNumber.matches(REGULAR_EXPRESSION_FOR_BILL_NUMBER)){
 								DraftlawValidationMessage message = new DraftlawValidationMessage();
 								message.setMessage("The registration number '"+billNumber+"' does not match the '#xx-x/xxx' format, where x must be a digit - for the draft law on row "
-											+ Integer.toString(realRowNumber) + " (page '" + lastSpreadsheetTitle +"')");
+											+ Integer.toString(realRowNumber) + " (page '" + spreadsheetTitle +"')");
 								draftlawErrorMessages.add(message);
 							}
+							
+							// Now let's work on this draft law's discussions.
+							Set<DraftlawDiscussion> discussions = new HashSet<DraftlawDiscussion>();
+							int stage = 0;
+							
+							// initialization of the variable that will be used to define the draft law's status.
+							int highestStage = -1;
+							String highestStageDate = null;
+									
+							
+							for (String discussionFieldName : listOfDiscussionFields){
+								
+								String discussionFieldValue = null;
+								try {
+									discussionFieldValue = BeanUtils.getProperty(draftlaw, discussionFieldName);
+								} catch (NoSuchMethodException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
+								
+								if (discussionFieldValue != null && !discussionFieldValue.isEmpty()){
+
+									DraftlawDiscussion discussion = new DraftlawDiscussion();
+									
+									String hearingDateStr = getDateFromHearingDescription(discussionFieldValue);
+									Date hearingDate = null;
+									if (hearingDateStr != null){
+										try{
+											hearingDate = fieldDateFormat.parse(hearingDateStr);
+
+											String dateForTest = fieldDateFormat.format(hearingDate);
+											if (!dateForTest.equalsIgnoreCase(hearingDateStr)){
+												// This test is to make sure that the date was not entered with the 'DD.MM.YYYY' format (day and month inversed)
+												DraftlawValidationMessage message = new DraftlawValidationMessage();
+												message.setMessage("The date '"+discussionFieldValue+"', in field'"+discussionFieldName+"' does not match the mandatory format 'MM.DD.YYYY', for the draft law on row "
+															+ Integer.toString(realRowNumber) + " (page '" + spreadsheetTitle +"')");
+												draftlawErrorMessages.add(message);
+												continue;
+											}else if (hearingDate.after(todaydate)){
+												// The discussion date cannot be in the future
+												DraftlawValidationMessage message = new DraftlawValidationMessage();
+												message.setMessage("The date '"+discussionFieldValue+"', in field'"+discussionFieldName+"' cannot be set in the future, for the draft law on row "
+															+ Integer.toString(realRowNumber) + " (page '" + spreadsheetTitle +"')");
+												draftlawErrorMessages.add(message);
+												continue;
+											}else{
+												discussion.setDiscussionDate(hearingDate);
+											}
+											
+										} catch (ParseException e) {}
+									}else if (discussionFieldValue != null && hearingDateStr == null ){
+										DraftlawValidationMessage message = new DraftlawValidationMessage();
+										message.setMessage("The date in '"+discussionFieldValue+"', in the field'"+discussionFieldName+"' is invalid, for the draft law on row "
+													+ Integer.toString(realRowNumber) + " (page '" + spreadsheetTitle +"'). Please enter a valid date (MM.DD.YYYY), if you're writing some details about a discussion.");
+										draftlawErrorMessages.add(message);
+									}
+									
+									String place = null;
+									String placeKa = null;
+									if (stage % 2 == 0){
+										place = "Committee";
+										placeKa = "კომიტეტი";
+									}else{
+										place = "Plenary";
+										placeKa = "პლენარული";
+									}
+									
+									discussion.setPlace(place);
+									discussion.setPlace_en(place);
+									discussion.setPlace_ka(placeKa);
+									discussion.setPassed("N");
+									discussion.setStage(stage);
+									
+									discussions.add(discussion);
+									
+									if (stage > highestStage){
+										highestStage = stage;
+										highestStageDate = fieldDateFormat.format(discussion.getDiscussionDate());
+									}
+									
+								}
+								stage++;
+							
+							}
+							
+							String enStatusStage = null;
+							String kaStatusStage = null;
+									
+							switch(highestStage){
+							case 0:
+								enStatusStage = "1st Committee";
+								kaStatusStage = "I მოსმენა კომიტეტი";
+								break;
+							case 1:
+								enStatusStage = "1st Plenary";
+								kaStatusStage = "I მოსმენა პლენარული";
+								break;
+							case 2:
+								enStatusStage = "2nd Committee";
+								kaStatusStage = "II მოსმენა კომიტეტი";
+								break;
+							case 3:
+								enStatusStage = "2nd Plenary";
+								kaStatusStage = "II მოსმენა პლენარული";
+								break;
+							case 4:
+								enStatusStage = "3rd Committee";
+								kaStatusStage = "III მოსმენა კომიტეტი";
+								break;
+							case 5:
+								enStatusStage = "3rd Plenary";
+								kaStatusStage = "III მოსმენა პლენარული";
+								break;
+							}
+							
+							
+							String englishStatus = enStatusStage + " " + highestStageDate;
+							String georgianStatus = kaStatusStage + " " + highestStageDate;
+							
+							if (highestStage == 5){
+								englishStatus += ": PASS";
+								georgianStatus += ": მიღებულია";
+								
+								draftlaw.setShortStatus("P");
+							}else{
+								// Short status for didn't pass (yet)
+								draftlaw.setShortStatus("D");
+							}
+							draftlaw.setStatus(englishStatus);
+							draftlaw.setStatusEn(englishStatus);
+							draftlaw.setStatusKa(georgianStatus);
+							
+							draftlaw.setDiscussions(discussions);
 						}
-						
 						countrow++;
 					}
 				}
@@ -206,7 +398,7 @@ public class GoogleSpreadsheetParser {
 		
 	}
 
-	private static SpreadsheetEntry getGoogleSpreadsheet(SpreadsheetService service){
+	private static SpreadsheetEntry getGoogleSpreadsheetInfo(SpreadsheetService service){
 
 		SpreadsheetEntry spreadsheetResult = null;
 
@@ -256,348 +448,7 @@ public class GoogleSpreadsheetParser {
 		return spreadsheetResult;
 
 	}
-
-	private static void processSpreadsheet(SpreadsheetEntry spreadsheet, SpreadsheetService service, String outputPath, Date lastScrapingDate) throws ParseException{
-		// Make a request to the API to fetch information about all
-		// worksheets in the spreadsheet.
-		List<WorksheetEntry> worksheets;
-		try {
-			worksheets = spreadsheet.getWorksheets();
-
-			// Iterate through each worksheet in the spreadsheet.
-			for (WorksheetEntry worksheet : worksheets) {
-				// Get the worksheet's title, row count, and column count.
-				String title = worksheet.getTitle().getPlainText();
-
-				System.out.println(title);
-
-				// We are currently only taking care of the 3rd spreadsheet (FALL 2013)
-				String lastSpreadsheetTitle = "SPRING 2014";
-				if (title != null && title.contains(lastSpreadsheetTitle)){
-
-					// Print the fetched information to the screen for this worksheet.
-					URL listFeedUrl = worksheet.getListFeedUrl();
-
-					ListFeed listFeed = service.getFeed(listFeedUrl, ListFeed.class);
-
-					// Iterate through each row, printing its cell values.
-					int countrow=0;
-
-					for (ListEntry row : listFeed.getEntries()) {
-						// Print the first column's cell value
-						// Iterate over the remaining columns, and print each cell value
-						if (countrow > 0){
-							Map<String,String> rowData = new HashMap<String,String>();
-
-							int countForColumn = 0;
-							for (String tag : row.getCustomElements().getTags()) {
-								rowData.put(colNames.get(countForColumn), row.getCustomElements().getValue(tag));
-								countForColumn++;
-							}
-
-							// We need the data after the most recent published draft law (13.06.2013)
-							String regDate = rowData.get("registrationDate");
-							SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-							boolean shouldBeAdded = false;
-							try {
-								if (regDate != null){
-									Date lawDate = sdf.parse(regDate);
-									shouldBeAdded = lastScrapingDate.before(lawDate);
-								}
-							} catch (ParseException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-
-							String registrationNumber = rowData.get("registrationNumber");
-
-							// Formatting data here, for the SQL query.
-							String registrationNumberForQuery = parseDataForQuery(rowData.get("registrationNumber"),true);
-							String draftLawTitle = parseDataForQuery(rowData.get("draftLawTitle"),true);
-							String draftLawTitleEn = parseDataForQuery(rowData.get("draftLawTitleEn"),true);
-							String initiator = parseDataForQuery(rowData.get("initiator"),true);
-							String initiatorEn = parseDataForQuery(rowData.get("initiatorEn"),true);
-							String author = parseDataForQuery(rowData.get("author"),true);
-							String authorEn = parseDataForQuery(rowData.get("authorEn"),true);
-							String summary = parseDataForQuery(rowData.get("description"),false);
-							String summaryEn = parseDataForQuery(rowData.get("descriptionEn"),false);
-							
-							String registrationDate = null;
-							if (rowData.get("registrationDate") != null){
-								registrationDate = "TO_DATE('"+rowData.get("registrationDate")+"','MM.DD.YYYY')";
-							}else{
-								registrationDate = "TO_DATE('01.01.1970','MM.DD.YYYY')";
-							}
-							
-							// Definition of the draft law's current status
-							String statusEnglish = defineCurrentStatus(rowData,"En");
-							String statusGeorgian = defineCurrentStatus(rowData,"Ka");
-
-
-							if (isPrimaryDraft(rowData)){
-								if (shouldBeAdded){
-									// We're dealing with the parent law, and its hearing related information
-
-									registrationNumberForQuery = registrationNumberForQuery.trim().replaceAll("–","-").replaceAll("\\(N'", "").replaceAll("\\(N", "").replaceAll("\\(", "").replaceAll("\"", "")
-											.replaceAll(" ", "").replace("'0", "'#0");
-									
-									String[] slugSplit = registrationNumberForQuery.split(":");
-									if (slugSplit != null && slugSplit.length > 1){
-										registrationNumberForQuery = slugSplit[0]+"'";
-									}
-									
-									slugSplit = registrationNumberForQuery.split(";");
-									if (slugSplit != null && slugSplit.length > 1){
-										registrationNumberForQuery = slugSplit[0]+"'";
-									}
-									
-									slugSplit = registrationNumberForQuery.split(",");
-									if (slugSplit != null && slugSplit.length > 1){
-										registrationNumberForQuery = slugSplit[0]+"'";
-									}
-									
-									slugSplit = registrationNumberForQuery.split("\\.");
-									if (slugSplit != null && slugSplit.length > 1){
-										registrationNumberForQuery = slugSplit[0]+"'";
-									}
-									
-									String slug = registrationNumberForQuery.replaceAll("#", "").replaceAll("/", "");
-									
-
-									if (registrationNumberForQuery.trim().contains("110")){
-										System.out.println();
-									}
-
-									// Insert main information into draftlaw_draftlaw table
-									String insertQuery = "INSERT INTO draftlaw_draftlaw (bureau_date,bill_number,title,title_en,"
-											+ "title_ka,initiator,initiator_en,initiator_ka,author,author_en,author_ka,status,status_en,status_ka,"
-											+ "summary,summary_en,summary_ka,full_text,full_text_url,enacted_text_url,related_1,related_2,related_3," 
-											+ "related_4,related_5,slug) "
-											+ "VALUES ("+registrationDate+","+ registrationNumberForQuery.trim() +","+draftLawTitle+","+draftLawTitleEn+","
-											+draftLawTitle+","+initiator+","+initiatorEn+","+initiator+","+author+","+authorEn+","+author
-											+","+statusEnglish+","+statusEnglish+","+statusGeorgian+","+summary+","+summaryEn+","+summary+","
-											+ "'','','','','','','','',"+slug+");\n";
-
-									
-
-									//bw.write(insertQuery);
-
-
-								}else{
-									// The parent law has already been added. We're doing updates here then. 
-									
-									String updateQuery = "UPDATE draftlaw_draftlaw SET "
-											+ "title_ka = " + draftLawTitle + ", "
-											+ "title_en = " + draftLawTitleEn + ", "
-											+ "initiator_ka = " + initiator + ", "
-											+ "initiator_en = " + initiatorEn + ", "
-											+ "author_ka = " + author + ", "
-											+ "author_en = " + authorEn + ", "
-											+ "status_ka = " + statusGeorgian + ", "
-											+ "status_en = " + statusEnglish + ", "
-											+ "summary_ka = " + summary + ", "
-											+ "summary_en = " + summaryEn + " "
-											+ "WHERE bureau_date = " + registrationDate + " AND bill_number = " + registrationNumberForQuery.trim() + " AND "
-											+ "title = " + draftLawTitle + ";\n";
-									
-									
-									//bw.write(updateQuery);
-									
-								}
-								
-								// Completing the insert queries with hearing info.
-								//writeLawHearingQueries(bw, lastScrapingDate, rowData, registrationNumberForQuery);
-
-								//bw.write("\n");
-								
-								
-							}else{
-								// We're dealing with a child law
-								registrationNumberForQuery = registrationNumberForQuery.trim();
-
-								if (!registrationNumberForQuery.isEmpty()){
-
-									String childLawTitleEn = parseDataForQuery(rowData.get("draftLawTitleEn"),true);
-									String childLawTitle = parseDataForQuery(rowData.get("draftLawTitle"),true);
-									String lawNumber = parseDataForQuery(rowData.get("lawNumber"),true);
-
-									String parentIdClause = "(SELECT id FROM draftlaw_draftlaw WHERE bill_number=" + registrationNumberForQuery +")";
-
-									String insertQuery = "INSERT INTO draftlaw_draftlawchild (parent_id,bill_number,title,law_number,title_en,title_ka,place) VALUES ("
-											+ parentIdClause + ","+registrationNumberForQuery+","+childLawTitle+","+lawNumber+","+childLawTitleEn+","+childLawTitle+",'');";
-
-									//childLawBw.write(insertQuery + "\n");
-								}
-							}
-
-
-						}
-						countrow++;
-					}
-				}
-			}
-			//bw.close();
-			//childLawBw.close();
-
-			// Merging files now: insertDraftLaws.sql first, then insertChildLaw.sql because of the dependencies.
-			File[] files = new File[2];
-			//files[0] = file;
-			//files[1] = childLawFile;
-
-			File outputFile = new File(outputPath+"/updateDraftLaws.sql");
-			System.out.println("File is at: " + outputPath+"/updateDraftLaws.sql");
-
-			if (outputFile.exists()) {
-				outputFile.delete();
-			}
-			outputFile.createNewFile();
-
-			mergeFiles(files, outputFile);
-
-		} catch (IOException e) {
-			System.out.println("Problem occured while creating SQL files");
-			e.printStackTrace();
-		} catch (ServiceException e) {
-			System.out.println("An error occured while instantiating SpreadsheedFeed.");
-			e.printStackTrace();
-		}
-
-		System.out.println("Done.");
-
-	}
-
-		
-	private static void writeLawHearingQueries(BufferedWriter bw, Date lastScrapingDate, Map<String,String> rowData, String registrationNumber) throws IOException, ParseException{
-		
-		writeHearingQuery(lastScrapingDate, rowData.get("firstCommitteeHearing"), registrationNumber, bw, 0);
-		writeHearingQuery(lastScrapingDate, rowData.get("firstPlenaryHearing"), registrationNumber, bw, 1);
-		writeHearingQuery(lastScrapingDate, rowData.get("secondCommitteeHearing"), registrationNumber, bw, 2);
-		writeHearingQuery(lastScrapingDate, rowData.get("secondPlenaryHearing"), registrationNumber, bw, 3);
-		writeHearingQuery(lastScrapingDate, rowData.get("thirdCommitteeHearing"), registrationNumber, bw, 4);
-		writeHearingQuery(lastScrapingDate, rowData.get("thirdPlenaryHearing"), registrationNumber, bw, 5);
-		
-	}
-
-	/**
-	 * Defines the current status of a law
-	 * @param rowData
-	 * @param statusLabel 
-	 * @return status String
-	 */
-	private static String defineCurrentStatus(Map<String, String> rowData, String lang) {
-		LinkedList<String> hearingLabelsToUse = null;
-		LinkedList<String> statusLabelToUse = null;
-		if (lang.equalsIgnoreCase("En")){
-			hearingLabelsToUse = hearingLabelsEn;
-			statusLabelToUse = statusLabelEn;
-		}else if (lang.equalsIgnoreCase("Ka")){
-			hearingLabelsToUse = hearingLabelsKa;
-			statusLabelToUse = statusLabelKa;
-		}
-		String status = "''";
-		int countHearing = 0;
-		for (String label : hearingLabelsToUse){
-			String hearing = rowData.get(label);
-			if (hearing != null && !hearing.trim().isEmpty()){
-				status = "'"+statusLabelToUse.get(countHearing).replaceAll("'", "''") + " - " + hearing.replaceAll("'", "''")+"'";
-				
-			}
-			countHearing++;
-		}
-		return status;
-	}
-
-	/**
-	 * Defines whether a row gives information about parent draft (as opposed to child draft)
-	 * @param rowData
-	 * @return
-	 */
-	private static boolean isPrimaryDraft(Map<String, String> rowData){
-		String value = rowData.get("primaryDraftLaw");
-		return (value != null && value.trim().equalsIgnoreCase("Primary"));
-	}
-
-	/**
-	 * Completes SQL queries, when inserting data in draftlaw_draftlawdiscussion table
-	 * @param lastScrapingDate 
-	 * @param insertHearingQuery
-	 * @param hearingDescription
-	 * @param registrationNumber
-	 * @param bw
-	 * @param stage
-	 * @throws IOException
-	 * @throws ParseException 
-	 */
-	private static void writeHearingQuery(Date lastScrapingDate, String hearingDescription, 
-			String registrationNumber, BufferedWriter bw, int stage) throws IOException, ParseException{
-		
-		
-		String insertQuery = "INSERT INTO draftlaw_draftlawdiscussion (draftlaw_id,date,stage,place,place_en,place_ka,passed) VALUES ";
-		String deleteQuery = "DELETE FROM draftlaw_draftlawdiscussion ";
-		
-		if (hearingDescription != null && !hearingDescription.isEmpty()){
-
-			String hearingValues = null;
-			String hearingDateStr = getDateFromHearingDescription(hearingDescription);
-			String hearingDateForQuery = null;
-			SimpleDateFormat sdf = new SimpleDateFormat("MM.dd.yyyy");
-			Boolean isHearingInformationAleardyAdded = false;
-			if (hearingDateStr != null){
-				hearingDateForQuery = "TO_DATE('"+hearingDateStr+"','MM.DD.YYYY')";
-				Date hearingDate = sdf.parse(hearingDateStr);
-				isHearingInformationAleardyAdded = lastScrapingDate.after(hearingDate);
-				
-			}else{
-				// There is no way to track if a law discussion that does not have any date has been already added. So we delete the releant record,
-				// before adding it again.
-				hearingDateForQuery = "TO_DATE('01.01.1970','MM.DD.YYYY')";
-				String deleteWhere = "WHERE draftlaw_id = (SELECT id FROM draftlaw_draftlaw WHERE bill_number = " + registrationNumber.trim() + ") AND stage = " + Integer.toString(stage) + ";";
-				bw.write(deleteQuery + deleteWhere + "\n");
-			}
-			
-			if (!isHearingInformationAleardyAdded){
-				String place = null;
-				String placeKa = null;
-				if (stage % 2 == 0){
-					place = "Committee";
-					placeKa = "კომიტეტი";
-				}else{
-					place = "Plenary";
-					placeKa = "პლენარული";
-				}
-				if (registrationNumber != null){
-					hearingValues = ("((SELECT id FROM draftlaw_draftlaw WHERE bill_number = " + registrationNumber.trim() +"),"+hearingDateForQuery+","+Integer.toString(stage)+
-							",'"+place+"','"+place+"','"+placeKa+"','N');");
 	
-				}
-	
-				if (hearingValues != null){
-					bw.write(insertQuery + hearingValues+"\n");
-				}
-			}
-		}
-	}
-
-	/**
-	 * Formatting data to get it ready to be injected in SQL query clauses.
-	 * @param data
-	 * @param isLimitedInSpace
-	 * @return
-	 */
-	private static String parseDataForQuery(String data, boolean isLimitedInSpace){
-		String result = "";
-		if (data != null){
-			// Some fields are limited to 255 characters
-			if (isLimitedInSpace && data.length() >= 255){
-				data = data.substring(0, 250) + "...";
-			}
-			data = data.replaceAll("'", "\"");
-			result = "'"+data.replaceAll("'", "''")+"'";
-		}else{
-			result = "''";
-		}
-		return result;
-	}
 
 	/**
 	 * Parsing spreadsheet cell to find date.
@@ -628,48 +479,6 @@ public class GoogleSpreadsheetParser {
 			}
 		}
 		return date; 
-	}
-
-	/**
-	 * Merges 2 SQL files into a single new one.
-	 * @param files
-	 * @param mergedFile
-	 */
-	public static void mergeFiles(File[] files, File mergedFile) {
-
-		FileWriter fstream = null;
-		BufferedWriter out = null;
-		try {
-			fstream = new FileWriter(mergedFile, true);
-			out = new BufferedWriter(fstream);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-
-		for (File f : files) {
-			System.out.println("merging: " + f.getName());
-			FileInputStream fis;
-			try {
-				fis = new FileInputStream(f);
-				BufferedReader in = new BufferedReader(new InputStreamReader(fis));
-
-				String aLine;
-				while ((aLine = in.readLine()) != null) {
-					out.write(aLine);
-					out.newLine();
-				}
-
-				in.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		try {
-			out.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
 	}
 
 }

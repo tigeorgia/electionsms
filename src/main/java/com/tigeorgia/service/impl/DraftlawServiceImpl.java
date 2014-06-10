@@ -50,4 +50,9 @@ public class DraftlawServiceImpl implements DraftlawService {
 		return draftLawDAO.getDraftlaw(registrationNumber);
 	}
 
+	@Override
+	public Draftlaw getDraftlawWithDiscussions(String registrationNumber) {
+		return draftLawDAO.getDraftlawWithDiscussions(registrationNumber);
+	}
+
 }

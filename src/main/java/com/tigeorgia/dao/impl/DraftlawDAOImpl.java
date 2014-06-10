@@ -3,6 +3,7 @@ package com.tigeorgia.dao.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -54,7 +55,6 @@ public class DraftlawDAOImpl implements DraftlawDAO {
 	@Override
 	public void updateDraftlaw(Draftlaw draftLaw) {
 		getCurrentSession().update(draftLaw);
-
 	}
 
 	@Override
@@ -67,6 +67,15 @@ public class DraftlawDAOImpl implements DraftlawDAO {
 	public List<Draftlaw> getDraftlaws(List<Integer> idList) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public Draftlaw getDraftlawWithDiscussions(String registrationNumber) {
+		Draftlaw draftlaw = getDraftlaw(registrationNumber);
+		if (draftlaw != null){
+			Hibernate.initialize(draftlaw.getDiscussions());
+		}
+		return draftlaw;
 	}
 
 }

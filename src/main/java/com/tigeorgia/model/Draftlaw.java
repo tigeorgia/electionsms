@@ -1,11 +1,15 @@
 package com.tigeorgia.model;
 
 import java.util.Date;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -17,8 +21,10 @@ public class Draftlaw {
 	@GeneratedValue
 	private Integer id;
 	
+    private transient Set<DraftlawDiscussion> discussions;
+	
 	@Column(name = "bureau_date")
-	private String bureauDate;
+	private Date bureauDate;
 	
 	@Column(name = "bill_number")
 	private String billNumber;
@@ -33,6 +39,18 @@ public class Draftlaw {
 	
 	private transient String primaryParentDraftLawEn;
 	
+	private transient String firstCommitteeHearing;
+	
+	private transient String firstPlenaryHearing;
+	
+	private transient String secondCommitteeHearing;
+	
+	private transient String secondPlenaryHearing;
+	
+	private transient String thirdCommitteeHearing;
+	
+	private transient String thirdPlenaryHearing;
+
 	private String title;
 	
 	private String initiator;
@@ -132,11 +150,11 @@ public class Draftlaw {
 		this.id = id;
 	}
 
-	public String getBureauDate() {
+	public Date getBureauDate() {
 		return bureauDate;
 	}
 
-	public void setBureauDate(String bureauDate) {
+	public void setBureauDate(Date bureauDate) {
 		this.bureauDate = bureauDate;
 	}
 
@@ -450,6 +468,7 @@ public class Draftlaw {
 		this.leadingCommitteeKa = leadingCommitteeKa;
 	}
 
+	@Transient
 	public String getRegistrationDate() {
 		return registrationDate;
 	}
@@ -457,6 +476,70 @@ public class Draftlaw {
 	public void setRegistrationDate(String registrationDate) {
 		this.registrationDate = registrationDate;
 	}
+
+	@Transient
+	public String getFirstCommitteeHearing() {
+		return firstCommitteeHearing;
+	}
+
+	public void setFirstCommitteeHearing(String firstCommitteeHearing) {
+		this.firstCommitteeHearing = firstCommitteeHearing;
+	}
+
+	@Transient
+	public String getFirstPlenaryHearing() {
+		return firstPlenaryHearing;
+	}
+
+	public void setFirstPlenaryHearing(String firstPlenaryHearing) {
+		this.firstPlenaryHearing = firstPlenaryHearing;
+	}
+
+	@Transient
+	public String getSecondCommitteeHearing() {
+		return secondCommitteeHearing;
+	}
+
+	public void setSecondCommitteeHearing(String secondCommitteeHearing) {
+		this.secondCommitteeHearing = secondCommitteeHearing;
+	}
+
+	@Transient
+	public String getSecondPlenaryHearing() {
+		return secondPlenaryHearing;
+	}
+
+	public void setSecondPlenaryHearing(String secondPlenaryHearing) {
+		this.secondPlenaryHearing = secondPlenaryHearing;
+	}
+
+	@Transient
+	public String getThirdCommitteeHearing() {
+		return thirdCommitteeHearing;
+	}
+
+	public void setThirdCommitteeHearing(String thirdCommitteeHearing) {
+		this.thirdCommitteeHearing = thirdCommitteeHearing;
+	}
+
+	@Transient
+	public String getThirdPlenaryHearing() {
+		return thirdPlenaryHearing;
+	}
+
+	public void setThirdPlenaryHearing(String thirdPlenaryHearing) {
+		this.thirdPlenaryHearing = thirdPlenaryHearing;
+	}
+
+	@Transient
+	public Set<DraftlawDiscussion> getDiscussions() {
+		return discussions;
+	}
+
+	public void setDiscussions(Set<DraftlawDiscussion> discussions) {
+		this.discussions = discussions;
+	}
+	
 	
 
 }
