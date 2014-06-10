@@ -43,6 +43,7 @@ import org.springframework.xml.xpath.Jaxp13XPathTemplate;
 
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
 import com.google.gdata.data.spreadsheet.SpreadsheetEntry;
+import com.tigeorgia.model.GoogleInformation;
 import com.tigeorgia.validator.UploadedFileValidator;
 import com.tigeorgia.webservice.MagtiClient;
 
@@ -64,6 +65,11 @@ public class AppConfig extends WebMvcConfigurerAdapter{
 	private static final String PROPERTY_NAME_HIBERNATE_POOL_SIZE = "connection.pool_size";
 	private static final String PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN = "entitymanager.packages.to.scan";
 	
+	private static final String GOOGLE_ACCOUNT_USERNAME = "google.username";
+	private static final String GOOGLE_ACCOUNT_PASSWORD = "google.password";
+	private static final String GOOGLE_SPREADSHEET_URL = "google.spreadsheet.url";
+	private static final String GOOGLE_SPREADSHEET_TITLE = "google.spreadsheet.title";
+	
 	@Resource
 	private Environment env;
 	
@@ -77,6 +83,17 @@ public class AppConfig extends WebMvcConfigurerAdapter{
 		dataSource.setPassword(env.getRequiredProperty(PROPERTY_NAME_DATABASE_PASSWORD));
 
 		return dataSource;
+	}
+	
+	@Bean
+	public GoogleInformation googleInformation() {
+		GoogleInformation googleInformation = new GoogleInformation();
+		googleInformation.setUsername(env.getRequiredProperty(GOOGLE_ACCOUNT_USERNAME));
+		googleInformation.setPassword(env.getRequiredProperty(GOOGLE_ACCOUNT_PASSWORD));
+		googleInformation.setSpreadsheetUrl(env.getRequiredProperty(GOOGLE_SPREADSHEET_URL));
+		googleInformation.setSpreadsheetTitle(env.getRequiredProperty(GOOGLE_SPREADSHEET_TITLE));
+		
+		return googleInformation;
 	}
 
 	@Bean

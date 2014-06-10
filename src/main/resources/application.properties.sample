@@ -24,3 +24,9 @@ hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
 hibernate.show_sql=true
 connection.pool_size=1
 entitymanager.packages.to.scan=com.tigeorgia
+
+# Google account configuration, to read the draft law Google spreadsheet
+google.username=
+google.password=
+google.spreadsheet.url=
+google.spreadsheet.title=

@@ -29,15 +29,9 @@ import com.tigeorgia.model.Draftlaw;
 import com.tigeorgia.model.DraftlawContainer;
 import com.tigeorgia.model.DraftlawDiscussion;
 import com.tigeorgia.model.DraftlawValidationMessage;
+import com.tigeorgia.model.GoogleInformation;
 
 public class GoogleSpreadsheetParser {
-	
-	public static final String GOOGLE_ACCOUNT_USERNAME = "*****";
-	public static final String GOOGLE_ACCOUNT_PASSWORD = "*****";
-
-	public static final String GOOGLE_SPREADSHEET_TITLE = "კანონპროექტების ბაზა | Draft law database";
-
-	public static final String SPREADSHEET_URL = "*****";
 	
 	public static final String REGULAR_EXPRESSION_FOR_BILL_NUMBER = "#\\d{2}-\\d/\\d{3}";
 
@@ -66,14 +60,10 @@ public class GoogleSpreadsheetParser {
 	public static final LinkedList<String> hearingLabelsEn = new LinkedList<String>(Arrays.asList("firstCommitteeHearingEn","firstPlenaryHearingEn","secondCommitteeHearingEn","secondPlenaryHearingEn","thirdCommitteeHearingEn","thirdPlenaryHearingEn"));
 	
 	
-	public static SpreadsheetEntry getGoogleSpreadsheet(SpreadsheetService service){
-		
-		SpreadsheetEntry spreadsheet = getGoogleSpreadsheetInfo(service);
-		
+	public static SpreadsheetEntry getGoogleSpreadsheet(SpreadsheetService service, GoogleInformation googleInformation){
+		SpreadsheetEntry spreadsheet = getGoogleSpreadsheetInfo(service, googleInformation);
 		return spreadsheet;
-		
 	}
-	
 	
 	public static List<String> getAllPageNames(SpreadsheetEntry spreadsheet){
 		
@@ -398,7 +388,7 @@ public class GoogleSpreadsheetParser {
 		
 	}
 
-	private static SpreadsheetEntry getGoogleSpreadsheetInfo(SpreadsheetService service){
+	private static SpreadsheetEntry getGoogleSpreadsheetInfo(SpreadsheetService service, GoogleInformation googleInformation){
 
 		SpreadsheetEntry spreadsheetResult = null;
 
@@ -407,7 +397,7 @@ public class GoogleSpreadsheetParser {
 
 		// Login and prompt the user to pick a sheet to use.
 		try {
-			service.setUserCredentials(GOOGLE_ACCOUNT_USERNAME, GOOGLE_ACCOUNT_PASSWORD);
+			service.setUserCredentials(googleInformation.getUsername(), googleInformation.getPassword());
 
 			URL SPREADSHEET_FEED_URL = new URL("https://spreadsheets.google.com/feeds/spreadsheets/private/full");
 
@@ -421,7 +411,7 @@ public class GoogleSpreadsheetParser {
 			for (SpreadsheetEntry spreadsheet : spreadsheets) {
 				// Print the title of this spreadsheet to the screen
 				String doctitle = spreadsheet.getTitle().getPlainText();
-				if (doctitle != null && doctitle.equalsIgnoreCase(GOOGLE_SPREADSHEET_TITLE)){
+				if (doctitle != null && doctitle.equalsIgnoreCase(googleInformation.getSpreadsheetTitle())){
 					spreadsheetIndex = count;
 				}
 				count++;

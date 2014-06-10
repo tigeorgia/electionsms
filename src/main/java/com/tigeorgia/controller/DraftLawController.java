@@ -28,6 +28,7 @@ import com.tigeorgia.model.Draftlaw;
 import com.tigeorgia.model.DraftlawContainer;
 import com.tigeorgia.model.DraftlawDiscussion;
 import com.tigeorgia.model.DraftlawValidationMessage;
+import com.tigeorgia.model.GoogleInformation;
 import com.tigeorgia.model.Message;
 import com.tigeorgia.service.DraftlawDiscussionService;
 import com.tigeorgia.service.DraftlawService;
@@ -53,6 +54,9 @@ public class DraftLawController {
 
 	@Autowired
 	private DraftlawService draftLawService;
+	
+	@Autowired
+	private GoogleInformation googleInformation;
 
 	@Autowired
 	private DraftlawDiscussionService draftLawDiscussionService;
@@ -75,7 +79,7 @@ public class DraftLawController {
 		DraftLawPage pageModel = new DraftLawPage();
 		
 		// Get Draft law Google spreadsheet
-		spreadsheet = GoogleSpreadsheetParser.getGoogleSpreadsheet(service);
+		spreadsheet = GoogleSpreadsheetParser.getGoogleSpreadsheet(service, googleInformation);
 		
 		// Let's get all the pages title. We'll work on the 2014 pages onwards.
 		List<String> pageTitles = GoogleSpreadsheetParser.getAllPageNames(spreadsheet);
