@@ -53,3 +53,8 @@ Select the file, choose the group type (Parliament or Election), and upload the 
 5. Send message.
 6. After you receive the confirmation message (top of the page), go to the "Logging page", in order to see the status of your sending. 
 If you've received an error message, you will see, on the logging page, the name and phone number of the people who didn't receive the message.
+
+License
+-------
+
+Election SMS is released under the terms of [GNU General Public License (V2)](http://www.gnu.org/licenses/gpl-2.0.html).
