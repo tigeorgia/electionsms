@@ -1,17 +1,22 @@
 package com.tigeorgia.controller;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -64,15 +69,26 @@ public class ShowListController {
 	}
 
 	private List<Person> getRecipientListFromOneFile(String contactType, ModelMap model){
-		CsvFile file = Utilities.getListOfRecipients(logger, contactType);
+		
 		List<Person> recipients = null;
-		if (file != null){
-			recipients = file.getRecipients();
-		}
+		
+		if (contactType.equalsIgnoreCase(Utilities.ELECTION_CONTACT_TYPE)){
+			// We retrieve the Election list from the CSV file
+			CsvFile file = Utilities.getListOfRecipients(logger, contactType);
+			if (file != null){
+				recipients = file.getRecipients();
+			}
 
-		if (file.getErrorMessage() != null){
-			model.addAttribute("errorMessage"+contactType, file.getErrorMessage() + " (" + contactType + ")");
-		}else if (recipients == null){
+			if (file.getErrorMessage() != null){
+				model.addAttribute("errorMessage"+contactType, file.getErrorMessage() + " (" + contactType + ")");
+			}
+		}else if (contactType.equalsIgnoreCase(Utilities.PARLIAMENT_CONTACT_TYPE)){
+			// We retrieve the Parliament list from the MyParliament API
+			recipients = Utilities.getParliamentaryContacts();
+		}
+		
+		
+		if (recipients == null){
 			model.addAttribute("errorMessage"+contactType, "There was a problem while trying to retrieve the recipient list (" + contactType + ")");
 		}
 		return recipients;

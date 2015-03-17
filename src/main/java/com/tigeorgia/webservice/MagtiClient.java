@@ -1,5 +1,7 @@
 package com.tigeorgia.webservice;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +25,12 @@ public class MagtiClient {
 	private RestTemplate restTemplate;
 
 	private String magtiWebserviceEndpoint;
+	
+	private String magtiWebserviceEndpointComplete;
+	
+	private String smsServerIp;
+	private String smsServerUsername;
+	private String smsServerPassword;
 
 	Map<String, String> wsVariables;
 
@@ -33,11 +41,15 @@ public class MagtiClient {
 
 	public Summary sendMessages(Message message, String contactType) {
 
-		CsvFile file = Utilities.getListOfRecipients(logger, contactType);
-		
 		List<Person> recipients = null;
-		if (file != null){
-			recipients = file.getRecipients();
+		if (contactType.equalsIgnoreCase(Utilities.ELECTION_CONTACT_TYPE)){
+			CsvFile file = Utilities.getListOfRecipients(logger, contactType);
+			if (file != null){
+				recipients = file.getRecipients();
+			}
+		}else if (contactType.equalsIgnoreCase(Utilities.PARLIAMENT_CONTACT_TYPE)){
+			// We retrieve the Parliament list from the MyParliament API
+			recipients = Utilities.getParliamentaryContacts();
 		}
 		
 		Summary summary = null;
@@ -77,13 +89,27 @@ public class MagtiClient {
 							wsVariables.put("to", recipientNumber);
 							wsVariables.put("text", message.getBody());
 
-							magtiResponse = restTemplate.getForObject(magtiWebserviceEndpoint, String.class, wsVariables);
+							String urlEncodedText = "";
 							
-							String[] responses = magtiResponse.split(" - ");
-							if (responses != null && responses.length == 2){
-								statusCode = responses[0].trim();
-							}else{
-								statusCode = magtiResponse;
+							try {
+								urlEncodedText = URLEncoder.encode(message.getBody(), "UTF-8");
+							} catch (UnsupportedEncodingException e) {
+							}
+								
+							String commandToPass = String.format(magtiWebserviceEndpointComplete, recipientNumber, urlEncodedText);
+							commandToPass = "curl '"+commandToPass+"'";
+
+							// Previous way to send message to Magti - since we have to SSH to the server connected via VPN to Magti first, we're using other means than RestTemplate. 
+							//magtiResponse = restTemplate.getForObject(magtiWebserviceEndpoint, String.class, wsVariables);
+							magtiResponse = Utilities.sendMessageToMagtiOverSsh(commandToPass, smsServerIp, smsServerUsername, smsServerPassword);
+							
+							if (magtiResponse != null){
+								String[] responses = magtiResponse.split(" - ");
+								if (responses != null && responses.length == 2){
+									statusCode = responses[0].trim();
+								}else{
+									statusCode = magtiResponse;
+								}
 							}
 						}else{
 							// There is been a formatting problem, in the CSV file - phone number was not entered properly.
@@ -92,7 +118,7 @@ public class MagtiClient {
 						
 						countTotalMessageSent++;
 						
-						if (statusCode.equalsIgnoreCase(Constants.MAGTI_WSCODE_SUCCESS)){
+						if (statusCode != null && statusCode.equalsIgnoreCase(Constants.MAGTI_WSCODE_SUCCESS)){
 							countSuccess++;
 						}else{
 							countFail++;
@@ -144,6 +170,41 @@ public class MagtiClient {
 
 	public void setWsVariables(Map<String, String> wsVariables) {
 		this.wsVariables = wsVariables;
-	}	
+	}
+
+	public String getMagtiWebserviceEndpointComplete() {
+		return magtiWebserviceEndpointComplete;
+	}
+
+	public void setMagtiWebserviceEndpointComplete(
+			String magtiWebserviceEndpointComplete) {
+		this.magtiWebserviceEndpointComplete = magtiWebserviceEndpointComplete;
+	}
+
+	public String getSmsServerIp() {
+		return smsServerIp;
+	}
+
+	public void setSmsServerIp(String smsServerIp) {
+		this.smsServerIp = smsServerIp;
+	}
+
+	public String getSmsServerUsername() {
+		return smsServerUsername;
+	}
+
+	public void setSmsServerUsername(String smsServerUsername) {
+		this.smsServerUsername = smsServerUsername;
+	}
+
+	public String getSmsServerPassword() {
+		return smsServerPassword;
+	}
+
+	public void setSmsServerPassword(String smsServerPassword) {
+		this.smsServerPassword = smsServerPassword;
+	}
+	
+	
 
 }

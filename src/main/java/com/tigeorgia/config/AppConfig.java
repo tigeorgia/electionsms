@@ -70,6 +70,9 @@ public class AppConfig extends WebMvcConfigurerAdapter{
 	private static final String GOOGLE_SPREADSHEET_URL = "google.spreadsheet.url";
 	private static final String GOOGLE_SPREADSHEET_TITLE = "google.spreadsheet.title";
 	
+	private static final String SSH_TO_SHENMARTAV_SCRIPT = "path.to.shenmartavscript";
+	private static final String SQLFILE_PATH = "path.to.sqlfile";
+	
 	@Resource
 	private Environment env;
 	
@@ -94,6 +97,16 @@ public class AppConfig extends WebMvcConfigurerAdapter{
 		googleInformation.setSpreadsheetTitle(env.getRequiredProperty(GOOGLE_SPREADSHEET_TITLE));
 		
 		return googleInformation;
+	}
+	
+	@Bean 
+	public String pathToShenmartavScript() {
+		return env.getRequiredProperty(SSH_TO_SHENMARTAV_SCRIPT);
+	}
+	
+	@Bean 
+	public String pathToSqlFile() {
+		return env.getRequiredProperty(SQLFILE_PATH);
 	}
 
 	@Bean
@@ -166,17 +179,32 @@ public class AppConfig extends WebMvcConfigurerAdapter{
 		String params = "username={username}&password={password}&client_id={client_id}&service_id={service_id}&to={to}&text={text}";
 		magtiClient.setMagtiWebserviceEndpoint(env.getRequiredProperty("magti.webservice.endpoint") + params);
 		
+		String username = env.getRequiredProperty("magti.username");
+		String password = env.getRequiredProperty("magti.password");
+		String clientId = env.getRequiredProperty("magti.clientid");
+		String serviceId = env.getRequiredProperty("magti.serviceid");
+		
+		
 		Map<String,String> variables = new HashMap<String,String>();
-		variables.put("username", env.getRequiredProperty("magti.username"));
-		variables.put("password", env.getRequiredProperty("magti.password"));
-		variables.put("client_id", env.getRequiredProperty("magti.clientid"));
-		variables.put("service_id", env.getRequiredProperty("magti.serviceid"));
+		variables.put("username", username);
+		variables.put("password", password);
+		variables.put("client_id", clientId);
+		variables.put("service_id", serviceId);
 		
 		magtiClient.setWsVariables(variables);
 		
+		// Fully populated version of the endpoint, to be used by the python script
+		params = "username="+username+"&password="+password+"&client_id="+clientId+"&service_id="+serviceId+"&to=%s&text=%s";
+		magtiClient.setMagtiWebserviceEndpointComplete(env.getRequiredProperty("magti.webservice.endpoint") + params);
+		
+		magtiClient.setSmsServerIp(env.getRequiredProperty("smsserver_ipaddress"));
+		magtiClient.setSmsServerUsername(env.getRequiredProperty("smsserver_username"));
+		magtiClient.setSmsServerPassword(env.getRequiredProperty("smsserver_password"));
+	
 		return magtiClient;
 	}
 	
+
 	@Bean
 	public UploadedFileValidator fileValidator(){
 		return new UploadedFileValidator(); 

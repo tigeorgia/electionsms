@@ -159,10 +159,15 @@ public class SendMessageController {
 	 */
 	private List<String> initGroups(String contactGroup){
 
-		CsvFile file = Utilities.getListOfRecipients(logger, contactGroup);
 		List<Person> recipientList = null;
-		if (file != null){
-			recipientList = file.getRecipients();
+		if (contactGroup.equalsIgnoreCase(Utilities.ELECTION_CONTACT_TYPE)){
+			CsvFile file = Utilities.getListOfRecipients(logger, contactGroup);
+			if (file != null){
+				recipientList = file.getRecipients();
+			}
+		}else if (contactGroup.equalsIgnoreCase(Utilities.PARLIAMENT_CONTACT_TYPE)){
+			// We retrieve the Parliament list from the MyParliament API
+			recipientList = Utilities.getParliamentaryContacts();
 		}
 		List<String> groups = null;
 

@@ -33,19 +33,19 @@
 					<div class="box span12">
 						<div class="box-header well" data-original-title>
 							<h2>
-								<i class="icon-user"></i> Upload contacts
+								<i class="icon-user"></i> Upload Election contacts
 							</h2>
 						</div>
 						<div class="box-content">
 							<div class="control-group">
-								Upload a new CSV file, and select the type of contact (Parliament or Election), if you want to work with a new list of contacts.<br />
+								If you want to work with a new list of contacts, for the Election list, upload a new CSV file underneath.<br />
 								The CSV file must have one of the 2 following formats: 'Name,Numbers,Groups' or 'Name,Language,Numbers,Groups'.<br />
 								(If several 'Numbers' or 'Groups', values have to be separated by '|', in each column)
 							</div>
 							<c:if test="${isUploadedSuccessfully == true }">
 								<div class="alert alert-success">
 									<button type="button" class="close" data-dismiss="alert">×</button>
-									<strong>Success!</strong> The CSV file has been uploaded successfully, and been loaded in the table below.
+									<strong>Success!</strong> The CSV file has been uploaded successfully, and been loaded in the Election table below.
 								</div>
 							</c:if>
 							<div class="control-group">
@@ -60,54 +60,21 @@
 									</c:if>
 									<form:input id="fileupload" type="file" path="file" name="file" /> 
 									<input type="submit" value="Upload" id="submit"  />
-									<div class="controls">
-										<label class="radio"> 
-											<form:radiobutton path="contactType" value="parliament" /> Parliamentary contacts
-										</label>
-										<div style="clear:both"></div>
-										<label class="radio">
-											<form:radiobutton path="contactType" value="election" /> Election contacts
-										</label>
-									</div>
 								</form:form>
+							</div>
+							<div class="control-group">
+								<a href="${pageContext.request.contextPath}/download/ElectionPhoneNumberList.csv">Download current Election contact list (CSV file)</a>
 							</div>
 						</div>
 					</div>
 				</div>
 				
-				<div class="row-fluid sortable">
-					<div class="box span12">
-						<div class="box-header well" data-original-title>
-							<h2>
-								<i class="icon-user"></i> Download contact files
-							</h2>
-						</div>
-						<div class="box-content">
-							<c:if test="${downloadError != null}">
-								<div class="alert alert-error">
-									<button type="button" class="close" data-dismiss="alert">×</button>
-										${downloadError}
-								</div>
-							</c:if>
-							<c:if test="${fn:length(parliamentRecipients) > 0}">
-								<div class="control-group">
-									<a href="${pageContext.request.contextPath}/download/ParliamentPhoneNumberList.csv">Download Parliamentary contact list (CSV file)</a>
-								</div>
-							</c:if>
-							<c:if test="${fn:length(electionRecipients) > 0}">
-								<div class="control-group">
-									<a href="${pageContext.request.contextPath}/download/ElectionPhoneNumberList.csv">Download Election contact list (CSV file)</a>
-								</div>
-							</c:if>
-						</div>
-					</div>
-				</div>
 				
 				<div class="row-fluid sortable">
 					<div class="box span12">
 						<div class="box-header well" data-original-title>
 							<h2>
-								<i class="icon-user"></i> Parliamentary contacts
+								<i class="icon-user"></i> Parliamentary contacts (retrieved from MyParliament.ge)
 							</h2>
 							<div class="box-icon">
 								<a href="#" class="btn btn-minimize btn-round"><i class="icon-chevron-up"></i></a>
@@ -173,7 +140,7 @@
 					<div class="box span12">
 						<div class="box-header well" data-original-title>
 							<h2>
-								<i class="icon-user"></i> Election contacts
+								<i class="icon-user"></i> Election contacts (retrieved from uploaded CSV file)
 							</h2>
 							<div class="box-icon">
 								<a href="#" class="btn btn-minimize btn-round"><i class="icon-chevron-up"></i></a>

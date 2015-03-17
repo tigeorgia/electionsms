@@ -114,7 +114,7 @@
 									</c:if>
 									
 									
-									<c:if test="${discussionErrors != null}">
+									<c:if test="${errors != null}">
 										<div class="control-group">
 											<div class="controls">
 												<span style="color: red; font-weight: bold;">While the database update was taking place, some errors were found:</span>

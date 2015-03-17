@@ -30,3 +30,13 @@ google.username=
 google.password=
 google.spreadsheet.url=
 google.spreadsheet.title=
+
+# Path to sshToShenmartavForDraftlaws.sh
+path.to.shenmartavscript=/path/to/script
+
+# Key to decrypt the list of recipients coming from MyParliament SMS registration database, and users endpoint URL.
+decryption.key=
+sms_registration_endpoint=
+smsserver_ipaddress=
+smsserver_username=
+smsserver_password=

@@ -171,7 +171,11 @@ public class GoogleSpreadsheetParser {
 											
 								}else{
 									// Setting information in draftlaw instance, by reflection.
-									BeanUtils.setProperty(draftlaw,fieldName,value);
+									if (value != null){
+										BeanUtils.setProperty(draftlaw,fieldName,value.replaceAll("'", ""));
+									}else{
+										BeanUtils.setProperty(draftlaw,fieldName,"");
+									}
 								}
 								
 								countForColumn++;

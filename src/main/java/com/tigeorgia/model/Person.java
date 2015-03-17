@@ -9,6 +9,7 @@ public class Person {
 	private ArrayList<String> numbers;
 	private ArrayList<String> groups;
 	private String errorCode;
+	private String email;
 	
 	public Person() {	}
 	
@@ -18,6 +19,15 @@ public class Person {
 		this.numbers = numbers;
 		this.groups = groups;
 	}
+	
+	public Person(String name, String language, ArrayList<String> numbers, ArrayList<String> groups, String email) {
+		this.name = name;
+		this.language = language;
+		this.numbers = numbers;
+		this.groups = groups;
+		this.email = email;
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -50,6 +60,15 @@ public class Person {
 	public void setLanguage(String language) {
 		this.language = language;
 	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	
 	
 
 }

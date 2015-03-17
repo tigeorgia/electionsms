@@ -16,7 +16,7 @@
 						Logging</span></a></li>
 			<li><a class="ajax-link" href="${pageContext.request.contextPath}/draftlaw-import"><i
 					class="icon-upload"></i><span class="hidden-tablet">
-						Draft law import</span></a></li>						
+						Draft law importer</span></a></li>
 		</ul>
 	</div>
 	<!--/.well -->
