@@ -90,12 +90,6 @@
 												</c:if>
 											</c:forEach>
 											<hr>
-											<p class="help-block"><strong>Adjaran supreme council (Parliament group)</strong></p>
-											<label class="checkbox inline"> <form:checkbox
-													path="chosenParliamentaryGroups" class="groupParliamentCheckbox" value="Adjaran supreme council" />
-												Adjaran supreme council
-											</label>
-											<hr>
 											<p class="help-block"><strong>Election groups</strong></p>
 											<label class="checkbox inline"> <input
 												type="checkbox" id="allElectionGroupCheckbox" value="AllElection" /> All
