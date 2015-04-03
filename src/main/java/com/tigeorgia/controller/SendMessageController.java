@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
@@ -15,13 +16,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.tigeorgia.model.CsvFile;
 import com.tigeorgia.model.Message;
 import com.tigeorgia.model.Person;
-import com.tigeorgia.model.Summary;
 import com.tigeorgia.util.Constants;
 import com.tigeorgia.util.Utilities;
 import com.tigeorgia.webservice.MagtiClient;
 
 @Controller
 @RequestMapping("/sendmessage")
+@EnableAsync
 public class SendMessageController {
 
 	@Autowired
@@ -93,60 +94,9 @@ public class SendMessageController {
 			if (messageBody != null && !messageBody.isEmpty()){
 
 				// Messages to be sent, taking place here
-				Summary summary = magtiClient.sendMessages(messageToBeSent, contactType);
-
-				// Logging taking place here
-				if (summary != null){						
-					// We log the summary here
-					logger.info(Constants.MESSAGE_TAG + "------------------------------");
-					// First line: text + recipient groups + chosen language
-					String message = Constants.MESSAGE_TAG + " Message sent: " + messageBody 
-							+ " - language: " + messageToBeSent.getLang() + " - recipients: ";
-					if (messageGroups.size() == summary.getTotalNumberOfGroups()){
-						message += "All";
-					}else{
-						for (String group : messageGroups){
-							message += group + ", ";
-						}
-						message = message.substring(0, message.length()-2);
-					}
-
-					logger.info(message);
-
-					// Second line: success and fails.
-					message = Constants.MESSAGE_TAG + " Success: " + summary.getSuccessNumber()  + "/" + summary.getTotalNumber();;
-					if (summary.getFailNumber() > 0){
-						message += " - Fail: " + summary.getFailNumber() + "/" + summary.getTotalNumber();
-					}
-
-					logger.info(message);
-
-					// Third line: if there is any fails
-					if (summary.getFailNumber() > 0){
-						logger.info(Constants.MESSAGE_TAG + " People who did not receive message:");
-						int i=0;
-						for (Person person : summary.getDidntReceive()){
-							i++;
-							if (person.getNumbers() != null && person.getNumbers().size() >= 1){
-								logger.info(Constants.MESSAGE_TAG + " ### " + i + ") " + person.getName() + " - " + person.getNumbers().get(0) + 
-										" - Error code: " + person.getErrorCode());
-							}else{
-								logger.info(Constants.MESSAGE_TAG + " ### " + i + ") " + person.getName() + " - (phone number can't be read) - "
-										+ "Error code: " + person.getErrorCode());
-							}
-							
-						}
-						model.addAttribute("didntReceiveMessage", " Your message has been sent, but " + summary.getFailNumber() + " people did not receive the message (see logs)");
-					}else{
-						model.addAttribute("validMessage", "Your message has been sent to all the recipients you selected.");
-					}
-
-					logger.info(Constants.MESSAGE_TAG + "------------------------------");
-					model.addAttribute("messageModel", new Message());
-				}else{
-					model.addAttribute("errorMessage", "The list of recipients (CSV file) could not be read"); 
-				}
-
+				magtiClient.sendMessages(messageToBeSent, contactType);
+				
+				model.addAttribute("validMessage", "The message is currently being sent to the recipients of the selected groups. Go to the logging page in a moment to see the sending report.");
 			}else{
 				model.addAttribute("errorMessage", "Please write a message to send.");
 			}

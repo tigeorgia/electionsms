@@ -89,33 +89,6 @@ public class Utilities {
 		
 	}
 	
-	/**
-	 * Sends SMS message to Magti, via SSH to our server connected via VPN to Magti.
-	 * @param magtiEndpoint
-	 * @param smsServerIp
-	 * @param smsServerUser
-	 * @param smsServerPassword
-	 * @return Magti webservice response
-	 */
-	public static String sendMessageToMagtiOverSsh(String magtiEndpoint, String smsServerIp, String smsServerUser, String smsServerPassword) {
-		String result = null;
-		
-		String script_path = ShowListController.class.getClassLoader().getResource("sendMessageOverSsh.py").getFile();
-		ProcessBuilder pb = new ProcessBuilder("python", script_path, magtiEndpoint, smsServerIp, smsServerUser, smsServerPassword);
-		Process p;
-		try {
-			p = pb.start();
-			BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			result = in.readLine();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		
-		return result;
-	}
-	
-
 	private static CsvFile processListOfRecipients(Logger logger, String path, MultipartFile file) {
 
 		InputStream inputStream = null;
