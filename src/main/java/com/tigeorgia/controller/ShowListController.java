@@ -112,7 +112,7 @@ public class ShowListController {
 		}else{
 			try {  
 
-				String filePath = "/tmp/ElectionPhoneNumberList.csv";
+				String filePath = "/tmp/electionsms/ElectionPhoneNumberList.csv";
 
 				inputStream = file.getInputStream();
 				
