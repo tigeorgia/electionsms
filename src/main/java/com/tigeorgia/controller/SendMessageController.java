@@ -111,7 +111,7 @@ public class SendMessageController {
 
 		List<Person> recipientList = null;
 		if (contactGroup.equalsIgnoreCase(Utilities.ELECTION_CONTACT_TYPE)){
-			CsvFile file = Utilities.getListOfRecipients(logger, contactGroup);
+			CsvFile file = Utilities.getListOfRecipients(logger);
 			if (file != null){
 				recipientList = file.getRecipients();
 			}

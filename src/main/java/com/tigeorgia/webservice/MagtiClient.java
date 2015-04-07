@@ -53,7 +53,7 @@ public class MagtiClient {
 		
 		List<Person> recipients = null;
 		if (contactType.equalsIgnoreCase(Utilities.ELECTION_CONTACT_TYPE)){
-			CsvFile file = Utilities.getListOfRecipients(logger, contactType);
+			CsvFile file = Utilities.getListOfRecipients(logger);
 			if (file != null){
 				recipients = file.getRecipients();
 			}

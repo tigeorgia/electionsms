@@ -74,7 +74,7 @@ public class ShowListController {
 		
 		if (contactType.equalsIgnoreCase(Utilities.ELECTION_CONTACT_TYPE)){
 			// We retrieve the Election list from the CSV file
-			CsvFile file = Utilities.getListOfRecipients(logger, contactType);
+			CsvFile file = Utilities.getListOfRecipients(logger);
 			if (file != null){
 				recipients = file.getRecipients();
 			}

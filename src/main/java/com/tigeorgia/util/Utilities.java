@@ -32,14 +32,8 @@ public class Utilities {
 		return processListOfRecipients(logger, null, file);
 	}
 
-	public static CsvFile getListOfRecipients(Logger logger, String contactType) {
-		String path = null;
-		if (contactType.equalsIgnoreCase(PARLIAMENT_CONTACT_TYPE)){
-			path = "/tmp/ParliamentPhoneNumberList.csv";
-		}else if (contactType.equalsIgnoreCase(ELECTION_CONTACT_TYPE)){
-			path = "/tmp/ElectionPhoneNumberList.csv";
-		}
-
+	public static CsvFile getListOfRecipients(Logger logger) {
+		String path = "/tmp/electionsms/ElectionPhoneNumberList.csv";
 		return processListOfRecipients(logger, path, null);
 	}
 	
