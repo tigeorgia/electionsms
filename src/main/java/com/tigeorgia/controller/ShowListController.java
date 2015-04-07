@@ -112,17 +112,10 @@ public class ShowListController {
 		}else{
 			try {  
 
-				String contactType = uploadedFile.getContactType();
-				String filePath = null;
+				String filePath = "/tmp/ElectionPhoneNumberList.csv";
 
 				inputStream = file.getInputStream();
-
-				if (contactType.equalsIgnoreCase(Utilities.ELECTION_CONTACT_TYPE)){
-					filePath = "/tmp/ElectionPhoneNumberList.csv";
-				}else if (contactType.equalsIgnoreCase(Utilities.PARLIAMENT_CONTACT_TYPE)){
-					filePath = "/tmp/ParliamentPhoneNumberList.csv";
-				}
-
+				
 				// Creating new file here
 				File newFile = new File(filePath);  
 				if (!newFile.exists()) {  
