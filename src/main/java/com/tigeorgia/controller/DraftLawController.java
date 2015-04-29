@@ -166,17 +166,27 @@ public class DraftLawController {
 								+ "AND stage = " + discussion.getStage() + ";\n";
 
 						discussionsToDelete.add(deleteQuery);
+						
+						deleteQuery = "DELETE FROM draftlaw_draftlawdiscussion "
+								+ "WHERE draftlaw_id = (SELECT id FROM draftlaw_draftlaw WHERE slug = '" + draftlaw.getSlug() + "') "
+								+ "AND stage = " + discussion.getStage() + ";\n";
+
+						discussionsToDelete.add(deleteQuery);
 
 						String insertQuery = "INSERT INTO draftlaw_draftlawdiscussion (draftlaw_id,date,stage,place,place_en,place_ka,passed) VALUES " +
-								"((SELECT id FROM draftlaw_draftlaw WHERE bill_number = '" + draftlaw.getBillNumber() +"'),"+ 
+								"((SELECT id FROM draftlaw_draftlaw WHERE slug = '" + draftlaw.getSlug() +"'),"+ 
 								"TO_DATE('"+discussionDate+"','MM.DD.YYYY')" +","+ discussion.getStage() +",'"+ discussion.getPlace() +"','"+ 
 								discussion.getPlace_en() +"','"+ discussion.getPlace_ka() +"','N');\n";
 
 						discussionsToInsert.add(insertQuery);
 
 					}
+					
+					String deleteDraftlawQuery = "DELETE FROM draftlaw_draftlaw WHERE bill_number = '" + draftlaw.getBillNumber() + "';\n";
 
-					String deleteDraftlawQuery = "DELETE FROM draftlaw_draftlaw WHERE slug = '" + draftlaw.getSlug() + "';\n";
+					draftlawToDelete.add(deleteDraftlawQuery);
+
+					deleteDraftlawQuery = "DELETE FROM draftlaw_draftlaw WHERE slug = '" + draftlaw.getSlug() + "';\n";
 
 					draftlawToDelete.add(deleteDraftlawQuery);
 
@@ -218,23 +228,6 @@ public class DraftLawController {
 				e.printStackTrace();
 			}
 
-			// We run the bash script that will send the SQL file to the shenmartav server and run it.
-
-			/*String output = Utilities.executeShellScript(pathToShenmartavScript);
-			
-			if (output.equalsIgnoreCase("-1")){
-				// A problem occured when running the bash script.
-				DraftlawValidationMessage discMessage = new DraftlawValidationMessage();
-				discMessage.setMessage("An error occured after getting the information from the Spreadsheet, and before updating the MyParliament database.");
-				errors.add(discMessage);
-			}else{
-				// Creating confirmation messages
-				model.addAttribute("isUpdateSuccess", true);
-				String message = "Success! The draft laws have been imported to the MyParliament database.\n"
-						+ "Go check it out on the MyParliament website: <a href =\"http://chemiparlamenti.ge/en/what/\" target=\"_blank\">Draft law page</a>";
-				model.addAttribute("successMessage", message);
-
-			}*/
 			
 			model.addAttribute("isUpdateSuccess", true);
 			String message = "SQL file has been generated: " + pathToSqlFile + "/updateDraftlaws.sql";

@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -127,6 +128,7 @@ public class GoogleSpreadsheetParser {
 
 					// Iterate through each row, printing its cell values.
 					int countrow=0;
+					HashMap<String, Integer> billNumberHash = new HashMap<String, Integer>();
 					
 					for (ListEntry row : listFeed.getEntries()) {
 						// Print the first column's cell value
@@ -196,8 +198,20 @@ public class GoogleSpreadsheetParser {
 								draftlaw.setRelatedFive("");
 								draftlaw.setModerateAnnotations(new Date());
 								
-								String slug = draftlaw.getBillNumber().substring(1,draftlaw.getBillNumber().length());
-								draftlaw.setSlug(slug.replaceAll("/", ""));
+								String slug = draftlaw.getBillNumber().substring(1,draftlaw.getBillNumber().length()).replaceAll("/", "");
+
+								// Tracking the number of bill numbers that were processed
+								if (billNumberHash.containsKey(draftlaw.getBillNumber())){
+									int value = billNumberHash.get(draftlaw.getBillNumber());
+									slug = slug + "-" + Integer.toString(value+1);
+									billNumberHash.put(draftlaw.getBillNumber(), value+1);
+								}else{
+									billNumberHash.put(draftlaw.getBillNumber(), 1);
+									slug = slug + "-1";
+								}
+								
+								
+								draftlaw.setSlug(slug);
 								
 								parsedDraftlaws.add(draftlaw);
 							}
@@ -306,9 +320,12 @@ public class GoogleSpreadsheetParser {
 									
 									discussions.add(discussion);
 									
-									if (stage > highestStage){
+									if (stage > highestStage && discussion != null){
 										highestStage = stage;
-										highestStageDate = fieldDateFormat.format(discussion.getDiscussionDate());
+										Date discussionDate = discussion.getDiscussionDate();
+										if (discussionDate != null){
+											highestStageDate = fieldDateFormat.format(discussionDate);
+										}
 									}
 									
 								}
