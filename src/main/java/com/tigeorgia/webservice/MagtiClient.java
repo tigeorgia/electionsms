@@ -97,9 +97,8 @@ public class MagtiClient {
 						try {
 						   // thread to sleep for 1000 milliseconds
 						   Thread.sleep(1000);
-					   	} catch (Exception e) {						
+					   	} catch (Exception e) {
 					   	}
-						Thread.sleep(1000);
 						// Recipient is in chosen group, and in chosen language: we send the message.
 						ArrayList<String> recipientNumbers = recipient.getNumbers();
 						String statusCode = null;
