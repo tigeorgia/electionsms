@@ -94,6 +94,11 @@ public class MagtiClient {
 
 				for (Person recipient : recipients){
 					if ((allGroups || isInChosenGroup(recipient, chosenGroups)) && isInChosenLanguage(recipient, chosenLanguage)){
+						try {
+						   // thread to sleep for 1000 milliseconds
+						   Thread.sleep(1000);
+					   	} catch (Exception e) {						
+					   	}
 						Thread.sleep(1000);
 						// Recipient is in chosen group, and in chosen language: we send the message.
 						ArrayList<String> recipientNumbers = recipient.getNumbers();
